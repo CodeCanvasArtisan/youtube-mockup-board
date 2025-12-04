@@ -1,0 +1,22 @@
+.whiteboard-container {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    position: fixed; top:0;left:0;
+    
+    background-color: #F8F8F6;
+}
+
+.whiteboard-wrapper {
+    width: 5000px;
+    height: 5000px;
+    position: relative;
+
+    background-size: auto;
+    background-image: url("../assets/background_pattern.svg");
+    background-repeat: repeat;
+    background-color: red;
+
+    
+}
+
