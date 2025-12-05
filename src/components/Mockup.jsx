@@ -2,8 +2,10 @@ import {useState, useEffect, forwardRef} from "react";
 
 import styles from "../styles/components/mockup.module.css";
 import testThumbnail from "../assets/test_thumbnail.png";
+import resizeIcon from "../assets/utility_button_icons/resize.svg";
 
-export default function Mockup() {
+
+export function Mockup() {
     return (
         <div className={styles.container}>
             <section className={styles.thumbnail_section}>
@@ -30,4 +32,34 @@ export default function Mockup() {
             </section>
         </div>
     )
+}
+
+export function UtilityButtons() {
+    return (
+        <div className={styles.utility_buttons_container}>
+            <button onClick={() => editMockup()} className={styles.utility_button}>📝</button>
+            <button onClick={() => resizeMockup()} className={styles.utility_button}><img src={resizeIcon}/></button>
+            <button onClick={() => toggleFavourite()} className={styles.utility_button}>⭐</button>
+            <button onClick={() => toggleDarkMode()} className={styles.utility_button}>🌙</button>
+            <button onClick={() => deleteMockup()} className={styles.utility_button}>🗑️</button>
+        </div>
+    )
+}
+
+
+// utils
+function editMockup() {
+    alert("Editing mockup");
+}
+function resizeMockup() {
+    alert("Resizing Mockup");
+}
+function toggleFavourite() {
+    alert("Toggling favourite status");
+}
+function toggleDarkMode() {
+    alert("Toggling dark mode");
+}
+function deleteMockup() {
+    alert("Deleting mockup");
 }

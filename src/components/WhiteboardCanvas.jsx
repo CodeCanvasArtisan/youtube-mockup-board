@@ -1,9 +1,9 @@
 import React, {useState, useRef} from "react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Draggable from "react-draggable"
-import "../styles/whiteboardCanvas.css";
+import "../styles/components/whiteboardCanvas.css";
 
-import Mockup from "../components/Mockup.jsx";
+import {Mockup, UtilityButtons, MockupCombo} from "../components/Mockup.jsx";
 
 // panning + zooming
 const handleWheel = (ref, event) => { 
@@ -93,9 +93,9 @@ export default function Whiteboard() {
                             </div> 
                         </Draggable>
                         <Draggable bounds="parent" defaultPosition={{x: 2500, y: 2500}} nodeRef={nodeRef1} scale={scaleFactor}>
-                            <div className="draggable-item" handle=".handle" ref={nodeRef1} style={{width: "fit-content"}}>
+                            <div className="draggable-item mockup-group-container" handle=".handle" ref={nodeRef1} style={{width: "fit-content"}}>
                                 <Mockup/>
-                    
+                                <UtilityButtons/>
                             </div>  
                         </Draggable>
                     </div>

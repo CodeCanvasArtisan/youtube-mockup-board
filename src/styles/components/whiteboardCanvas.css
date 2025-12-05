@@ -16,7 +16,16 @@
     background-image: url("../assets/background_pattern.svg");
     background-repeat: repeat;
     background-color: red;
+}
 
-    
+.mockup-group-container {
+    width: fit-content;
+    display: grid;
+    grid-template-columns: 5fr 1fr;
+}
+.mockup-group-container > * {
+    display: flex;
+    gap: 15px;
+    flex-direction :column;
 }
 
