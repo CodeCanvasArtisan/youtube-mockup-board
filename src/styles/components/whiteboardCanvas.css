@@ -26,6 +26,7 @@
 .whiteboard-wrapper * {cursor: auto};
 .whiteboard-wrapper *:hover {cursor: auto;}
 
+/* Mockup container controls */
 .mockup-group-container {
     width: fit-content;
     display: grid;

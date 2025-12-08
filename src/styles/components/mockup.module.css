@@ -11,6 +11,7 @@
 
 }
 
+/* Classes that will be applied on state change */
 .active {
     box-shadow: 0px 0px 20px 2px var(--electric-sapphire);
     --font-color: var(--mockup-black);
@@ -24,6 +25,7 @@
     background-color: var(--mockup-background-dark) !important;
 }
 
+/* Mockup itself */
 .container {
     max-width: 600px;
     height: fit-content;
@@ -55,6 +57,7 @@
     color: white;
 }
 
+
 .video_info_section {
     height: 32%;
     display: grid;
@@ -73,8 +76,15 @@
    
 
     font-family: var(--font-default);
-
-
+}
+.video_info_section p  {
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: var(--mockup-font-size-secondary);
+    color: var(--mockup-grey);
+    padding-left: 5px;
+    text-align: left;
+    line-height: 1em;
 }
 
 .pfp {
@@ -88,15 +98,6 @@
 
 
 
-.video_info_section p  {
-    margin-top: auto;
-    margin-bottom: auto;
-    font-size: var(--mockup-font-size-secondary);
-    color: var(--mockup-grey);
-    padding-left: 5px;
-    text-align: left;
-    line-height: 1em;
-}
 .video_title {
     height: 70px;    
 }
@@ -107,8 +108,7 @@
     line-height: 1.2em;
 }
 
-/* Utility buttons */
-
+/* Utility button controls */
 .utility_button {
     height: 80px;
     width: 80px;
@@ -128,17 +128,18 @@
     width: 4em;
     margin: auto auto;
 }
+
+/* transform for moving into action when taken out of inactive state */
 .utility_button:active {
     transform: var(--hover-transform) scale(0.95) !important;
 }
 
+/* side toolbar buttons */
 .utility_button.toolbar {
     --inactive-transform: translateX(-10px);
     --hover-transform : translateX(5px);
     border-radius: 15px;
 }
-
-
 
 .utility_button.toolbar:hover {
     transform: var(--hover-transform);
@@ -147,6 +148,8 @@
 }
 .utility_button.toolbar.deleteButton:hover {background: red;}
 
+
+/* Bottom move button */
 .utility_button.move_button {
     --inactive-transform: translateY(-10px);
     --hover-transform: translateY(-5px);
