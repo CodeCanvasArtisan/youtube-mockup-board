@@ -86,13 +86,10 @@ export default function Whiteboard() {
                     }}
                 >
                     <div className="whiteboard-wrapper">
-                        <Draggable bounds="parent" defaultPosition={{x: 2500, y: 2500}} nodeRef={nodeRef1} scale={scaleFactor}>
-                            <div className="draggable-item" handle=".handle" ref={nodeRef1} style={{width: "fit-content"}}>
-                                <MockupCombo/>
-                            </div>  
-                        </Draggable>
+                        <MockupCombo scaleFactor={scaleFactor}/>
                     </div>
                 </TransformComponent>
+                
             </TransformWrapper>
         </div>
     )

@@ -1,4 +1,6 @@
-import {useState, useEffect, forwardRef} from "react";
+import {useState, useEffect, useRef} from "react";
+
+import Draggable from "react-draggable";
 
 import styles from "../styles/components/mockup.module.css";
 import testThumbnail from "../assets/test_thumbnail.png";
@@ -19,6 +21,7 @@ export function Mockup({isActive, isDarkMode}) {
         <div className={`${isDarkMode ? styles.dark : ""} ${styles.container} ${isActive ? styles.active : ""}`}>
             <section className={styles.thumbnail_section}>
                 <img src={testThumbnail} className={styles.thumbnail}/>
+                <div className={styles.video_length}>14:56</div>
             </section>
             <section className={styles.video_info_section}>
                 <div className={styles.pfp_section}>
@@ -57,20 +60,27 @@ export function UtilityButtons({isVisible, isDarkMode, toggleDarkMode}) {
     )
 }
 
-export function MockupCombo() {
+export function MockupCombo({scaleFactor}) {
     const [isActive, setIsActive] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
 
+    const nodeRef = useRef(null);
+
     return (
-        <div 
-            className = "mockup-group-container"
-            onMouseEnter={() => setIsActive(true)}
-            onMouseLeave={() => setIsActive(false)}
-        >
-            <Mockup isDarkMode={isDarkMode} isActive={isActive}/>
-            <UtilityButtons isDarkMode={isDarkMode} toggleDarkMode={setIsDarkMode} isVisible={isActive}/>
-            <button className={`${isActive ? "" : styles.inactive} ${styles.utility_button} ${styles.move_button}`}><img src={moveIcon}/></button>
-        </div>
+        <Draggable handle={`.${styles.move_button}`} bounds="parent" defaultPosition={{x: 2500, y: 2500}} nodeRef={nodeRef} scale={scaleFactor}>
+            <div 
+                onMouseEnter={() => setIsActive(true)}
+                onMouseLeave={() => setIsActive(false)} 
+                className="draggable-item mockup-group-container" 
+                handle=".handle" 
+                ref={nodeRef} style={{width: "fit-content"}}
+            >
+                <Mockup isDarkMode={isDarkMode} isActive={isActive}/>
+                <UtilityButtons isDarkMode={isDarkMode} toggleDarkMode={setIsDarkMode} isVisible={isActive}/>
+                <button className={`${isActive ? "" : styles.inactive} ${styles.utility_button} ${styles.move_button}`}><img src={moveIcon}/></button>
+            </div>  
+        </Draggable>
+        
     )
 }
 
