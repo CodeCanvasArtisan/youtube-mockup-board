@@ -5,6 +5,8 @@
     position: fixed; top:0;left:0;
     
     background-color: #F8F8F6;
+
+    
 }
 
 .whiteboard-wrapper {
@@ -13,19 +15,33 @@
     position: relative;
 
     background-size: auto;
-    background-image: url("../assets/background_pattern.svg");
+    background-image: url("/src/assets/background_pattern.svg");
     background-repeat: repeat;
-    background-color: red;
 }
+
+.whiteboard-wrapper:hover {cursor: grab;}
+.whiteboard-wrapper:active {cursor: grabbing};
+
+/* Reset cursor for children */
+.whiteboard-wrapper * {cursor: auto};
+.whiteboard-wrapper *:hover {cursor: auto;}
 
 .mockup-group-container {
     width: fit-content;
     display: grid;
     grid-template-columns: 5fr 1fr;
+    row-gap: 30px;
 }
 .mockup-group-container > * {
     display: flex;
     gap: 15px;
     flex-direction :column;
+    margin: 0 auto;
+
+    
+}
+.mockup-group-container * {
+    transition: all 0.2s ease;
 }
 
+.draggable-item {cursor: auto;}

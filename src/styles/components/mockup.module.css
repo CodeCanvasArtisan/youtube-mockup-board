@@ -1,11 +1,27 @@
 :root {
-    --mockup-background : #0F0F0F;
+    --mockup-background-dark : #0F0F0F;
+    --mockup-background-light : #FAFAFA;
+
     --mockup-font-size-primary : 1.6em;
     --mockup-font-size-secondary: 1.3em;
 
     --mockup-white : #f1f1f1;
+    --mockup-black : #000000;
     --mockup-grey : #9b9b9b;
-    
+
+}
+
+.active {
+    box-shadow: 0px 0px 20px 2px var(--electric-sapphire);
+    --font-color: var(--mockup-black);
+}
+.inactive {
+    opacity: 0;
+    transform: var(--inactive-transform)
+}
+.dark {
+    --font-color : var(--mockup-white) !important;
+    background-color: var(--mockup-background-dark) !important;
 }
 
 .container {
@@ -17,8 +33,8 @@
     gap: 15px;
 
     padding: 20px;
-
-    background-color: var(--mockup-background);
+    
+    background-color: var(--mockup-background-light);
 }
 
 
@@ -86,7 +102,7 @@
 }
 .video_title p {
     font-size: var(--mockup-font-size-primary);
-    color : var(--mockup-white);
+    color : var(--font-color);
     font-weight: bold;
     line-height: 1.2em;
 }
@@ -96,25 +112,48 @@
 .utility_button {
     height: 80px;
     width: 80px;
-    border-radius: 15px;
 
     aspect-ratio: 1/1;
-    margin-left: 20px;
+    
 
     background: var(--off-white);
-    box-shadow: 0px 0px 20px 5px #0F0F0F;
+    box-shadow: 0px 0px 20px 5px var(--electric-sapphire);
+
     border: none;
 
-    transition: all 0.2 ease;
+    transition: all 0.2s ease;
 }
 
 .utility_button img {
     width: 4em;
+    margin: auto auto;
 }
 .utility_button:active {
-    transform: scale(0.95);
+    transform: var(--hover-transform) scale(0.95) !important;
 }
-.utility_button:hover {
-    transform: translateX(5px);
+
+.utility_button.toolbar {
+    --inactive-transform: translateX(-10px);
+    --hover-transform : translateX(5px);
+    border-radius: 15px;
+}
+
+
+
+.utility_button.toolbar:hover {
+    transform: var(--hover-transform);
+    background: var(--alabaster);
     cursor: pointer;
 }
+.utility_button.toolbar.deleteButton:hover {background: red;}
+
+.utility_button.move_button {
+    --inactive-transform: translateY(-10px);
+    --hover-transform: translateY(-5px);
+    border-radius: 50%;
+}
+.utility_button.move_button:hover {
+    cursor: move;
+    transform: var(--hover-transform);
+}
+

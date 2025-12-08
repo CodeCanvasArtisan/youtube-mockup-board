@@ -2,12 +2,21 @@ import {useState, useEffect, forwardRef} from "react";
 
 import styles from "../styles/components/mockup.module.css";
 import testThumbnail from "../assets/test_thumbnail.png";
+
+import moveIcon from "../assets/utility_button_icons/move.svg";
+import editIcon from "../assets/utility_button_icons/edit.svg";
+import deleteIcon from "../assets/utility_button_icons/delete.svg";
 import resizeIcon from "../assets/utility_button_icons/resize.svg";
+import favouritedIcon from "../assets/utility_button_icons/favourite_icon_favourited.svg";
+import notFavouritedIcon from "../assets/utility_button_icons/favourite_icon_not_favourited.svg";
+import currentlyDarkIcon from "../assets/utility_button_icons/toggle_mode_currently_dark.svg";
+import currentlyLightIcon from "../assets/utility_button_icons/toggle_mode_currently_light.svg";
 
 
-export function Mockup() {
+
+export function Mockup({isActive, isDarkMode}) {
     return (
-        <div className={styles.container}>
+        <div className={`${isDarkMode ? styles.dark : ""} ${styles.container} ${isActive ? styles.active : ""}`}>
             <section className={styles.thumbnail_section}>
                 <img src={testThumbnail} className={styles.thumbnail}/>
             </section>
@@ -34,14 +43,33 @@ export function Mockup() {
     )
 }
 
-export function UtilityButtons() {
+export function UtilityButtons({isVisible, isDarkMode, toggleDarkMode}) {
+    const [favourited, setFavourited] = useState(false);
+    
     return (
         <div className={styles.utility_buttons_container}>
-            <button onClick={() => editMockup()} className={styles.utility_button}>📝</button>
-            <button onClick={() => resizeMockup()} className={styles.utility_button}><img src={resizeIcon}/></button>
-            <button onClick={() => toggleFavourite()} className={styles.utility_button}>⭐</button>
-            <button onClick={() => toggleDarkMode()} className={styles.utility_button}>🌙</button>
-            <button onClick={() => deleteMockup()} className={styles.utility_button}>🗑️</button>
+            <button onClick={() => editMockup()} className={`${isVisible ? "" : styles.inactive} ${styles.utility_button} ${styles.toolbar}`}><img src={editIcon}/></button>
+            <button onClick={() => resizeMockup()} className={`${isVisible ? "" : styles.inactive} ${styles.utility_button} ${styles.toolbar}`}><img src={resizeIcon}/></button>
+            <button onClick={() => setFavourited(!favourited)} className={`${isVisible ? "" : styles.inactive} ${styles.utility_button} ${styles.toolbar}`}><img src={favourited ? favouritedIcon : notFavouritedIcon}/></button>
+            <button onClick={() => toggleDarkMode(!isDarkMode)} className={`${isDarkMode ? styles.dark : ""} ${isVisible ? "" : styles.inactive} ${styles.utility_button} ${styles.toolbar}`}><img src={isDarkMode ? currentlyDarkIcon : currentlyLightIcon}/></button>
+            <button onClick={() => deleteMockup()} className={`${isVisible ? "" : styles.inactive} ${styles.utility_button} ${styles.toolbar} ${styles.deleteButton}`}><img src={deleteIcon}/></button>
+        </div>
+    )
+}
+
+export function MockupCombo() {
+    const [isActive, setIsActive] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
+    return (
+        <div 
+            className = "mockup-group-container"
+            onMouseEnter={() => setIsActive(true)}
+            onMouseLeave={() => setIsActive(false)}
+        >
+            <Mockup isDarkMode={isDarkMode} isActive={isActive}/>
+            <UtilityButtons isDarkMode={isDarkMode} toggleDarkMode={setIsDarkMode} isVisible={isActive}/>
+            <button className={`${isActive ? "" : styles.inactive} ${styles.utility_button} ${styles.move_button}`}><img src={moveIcon}/></button>
         </div>
     )
 }
