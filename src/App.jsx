@@ -11,10 +11,10 @@ function App() {
 
   return (
     <>
-    <BlurOverlay isVisible={false}/>
+    <BlurOverlay isVisible={true}/>
 
-    <EditMockupPopup isVisible={true}/>
-    <ResizeMockupPopup isVisible={false}/>
+    <EditMockupPopup isVisible={false} currSize="home-large"/>
+    <ResizeMockupPopup isVisible={true}/>
     <Whiteboard/>
 
     </>

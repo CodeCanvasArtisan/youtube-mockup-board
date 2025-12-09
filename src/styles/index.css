@@ -7,9 +7,10 @@
     --off-white : #F8F8F6;
     --amber-yellow : #ECC30B;
     --electric-sapphire : #2667FF;
-
-    --font-default : "Roboto", sans-serif;
-
+   
     /* Fonts */
+    --font-default : "Roboto", sans-serif;
+    --font-headings : "Inter", sans-serif;
+
     
 }
