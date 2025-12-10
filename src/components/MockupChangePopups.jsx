@@ -3,13 +3,35 @@ import {useState, useEffect} from "react";
 import { ResizeOptionLabel } from "./ResizeOptionLabels";
 import tickIcon from "../assets/tick.svg";
 import popupStyles from "../styles/components/mockupChangePopups.module.css";
+import resizeStyles from "../styles/components/resizePopup.module.css";
+import editStyles from "../styles/components/editPopup.module.css";
 
-export function EditMockupPopup({isVisible}) {
+export function EditMockupPopup({isVisible, currTitle}) {
+
+    const [title, setTitle] = useState(currTitle ? currTitle : "Enter your title to see how it looks");
+
     return (
         <>
+        
         {isVisible && (
             <div className={popupStyles.popupContainer}>
-                EDIT MOCKUP CONTENTS
+                <div className={editStyles.main_content}>
+                    <section className={editStyles.thumbnail_section}>
+                        <div className={editStyles.thumbnail_wrapper}>
+                            <h2>Upload your thumbnail</h2>
+                            <p>(1280 x 720 px is optimal)</p>
+                        </div>
+                    </section>
+                    <section className={editStyles.title_section}>
+
+                        <input type="text" onChange={e => setTitle(e.target.value)} className={editStyles.title_input} value={title} placeholder="Enter your genius title..."/>
+                        <p className={editStyles.characterLength}>{title.length}</p>
+                    </section>
+                    <div className={editStyles.title_suggestions_section}>
+                        <h2 className={popupStyles}>Previously used</h2>
+                    </div>
+                </div>
+                
             </div>
         )}
         </>
@@ -84,12 +106,12 @@ export function ResizeMockupPopup({isVisible, currSize, closePopup}) {
         <>
         {isVisible && (
             <div className={popupStyles.popupContainer}>
-                <section className={popupStyles.header}>
-                    <h1>Resize Combo</h1>
+                <section>
+                    <h1 className={popupStyles.header}>Resize Combo</h1>
                 </section>
                 <hr/>
-                <section className={popupStyles.main_content}>
-                    <div className={popupStyles.sizing_options_container}>
+                <section className={resizeStyles.main_content}>
+                    <div className={resizeStyles.sizing_options_container}>
                         <h2>Web Browser</h2>
                         <ResizeOptionLabel UIName="Home Page - Large" labelName="home-large" isChecked={chosenSize === "home-large"} onChange={() => setChosenSize("home-large")}/>
                         <ResizeOptionLabel UIName="Search Result" labelName="search-result" isChecked={chosenSize === "search-result"} onChange={() => setChosenSize("search-result")}/>
@@ -102,13 +124,13 @@ export function ResizeMockupPopup({isVisible, currSize, closePopup}) {
                         <ResizeOptionLabel UIName="Home Page - Full Width" labelName="home-full-width" isChecked={chosenSize === "home-full-width"} onChange={() => setChosenSize("home-full-width")}/>
 
                     </div>
-                    <div className={popupStyles.preview_container}>
+                    <div className={resizeStyles.preview_container}>
                         <h2>Preview</h2>
-                        <p>(Compared to <span className={popupStyles.colour_code}>Home Page - Large</span>)</p>
-                            <div className={popupStyles.preview_wrapper}>
-                            <div className={popupStyles.preview_chosen} style={{width: previewWidth, height: previewHeight}}></div>
+                        <p>(Compared to <span className={resizeStyles.colour_code}>Home Page - Large</span>)</p>
+                            <div className={resizeStyles.preview_wrapper}>
+                            <div className={resizeStyles.preview_chosen} style={{width: previewWidth, height: previewHeight}}></div>
                         </div>
-                        <button onClick={() => applySizingChanges()} className={popupStyles.submit_button}><img alt="submit" src={tickIcon}/>Looks good</button>
+                        <button onClick={() => applySizingChanges()} className={resizeStyles.submit_button}><img alt="submit" src={tickIcon}/>Looks good</button>
                     </div>
                 </section>
             </div>

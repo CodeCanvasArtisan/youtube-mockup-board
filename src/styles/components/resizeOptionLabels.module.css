@@ -1,11 +1,10 @@
-label {
+.option_label {
     font-family: var(--font-default);
     font-size: 1.5em;
     margin-left: 5px;
 }
-input {
+.option_input {
     transform: translateY(-2px) scale(1.25);
-  
 }
 
 .label_wrapper {

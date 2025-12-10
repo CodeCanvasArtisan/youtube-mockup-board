@@ -13,8 +13,8 @@ function App() {
     <>
     <BlurOverlay isVisible={true}/>
 
-    <EditMockupPopup isVisible={false} />
-    <ResizeMockupPopup currSize="home-large" closePopup={setEditPopupActive} isVisible={true}/>
+    <EditMockupPopup isVisible={true} />
+    <ResizeMockupPopup currSize="home-large" closePopup={setEditPopupActive} isVisible={false}/>
     <Whiteboard/>
 
     </>
