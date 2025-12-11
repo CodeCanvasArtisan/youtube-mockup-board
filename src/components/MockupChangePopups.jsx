@@ -1,14 +1,110 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useRef} from "react";
 
 import { ResizeOptionLabel } from "./ResizeOptionLabels";
 import tickIcon from "../assets/tick.svg";
+import imageIcon from "../assets/picture.svg";
+import arrowIcon from "../assets/arrow-white.svg";
 import popupStyles from "../styles/components/mockupChangePopups.module.css";
 import resizeStyles from "../styles/components/resizePopup.module.css";
 import editStyles from "../styles/components/editPopup.module.css";
 
-export function EditMockupPopup({isVisible, currTitle}) {
+
+
+export function EditMockupPopup({isVisible, currTitle, prevTitles}) {
 
     const [title, setTitle] = useState(currTitle ? currTitle : "Enter your title to see how it looks");
+    const [thumbnail, setThumbnail] = useState();
+    
+
+    const [showThumbnailWarning, setShowThumbnailWarning] = useState(false);
+    const [uploadDimensions, setUploadDimensions] = useState({});
+
+    const dropzone = useRef("thumbnail_dropzone");
+    const thumbnailPreview = useRef("thumbnail_preview");
+    const titleSuggestionsSection = useRef("title_suggestions_section");
+
+    const [submitHovered, setSubmitHovered] = useState(false);
+
+    const handleDrop = (e) => {
+        
+        e.preventDefault();
+        
+        const droppedFiles = e.dataTransfer.files;
+        if(droppedFiles.length > 1) {
+            alert("Multiple files were dropped, the first one was accepted.");
+        }
+        if (!droppedFiles) return;
+        const droppedFile = droppedFiles[0];
+
+        // validate the file type
+        const allowed = ["image/png", "image/jpg", "image/jpeg", "image/webp"];
+        if(!allowed.includes(droppedFile.type)) {
+            alert("Please drop a JPEG, PNG or WebP image");
+            return;
+        }
+
+        const img = new Image();
+        const url = URL.createObjectURL(droppedFile);
+        img.src = url;
+
+        img.onload = () => {
+            const aspectRatio = img.width / img.height
+            const is16x9 = Math.abs(aspectRatio - 16/9) < 0.01; // allow small tolerance
+
+            if(!is16x9) {
+                alert(`Image must be 16:9 aspect ratio.`);
+                URL.revokeObjectURL(url);
+                return;
+            }
+
+            // image is 16:9 - proceed
+            setUploadDimensions({
+                width : img.width,
+                height: img.height
+            })
+            
+            // set image as background
+            thumbnailPreview.current.src=url;
+            dropzone.current.classList.remove(editStyles.dragged_over);
+            dropzone.current.classList.add(editStyles.thumbnail_chosen);
+
+            // let them know 1280x720 px is best
+            if(img.width != 1280 || img.height != 720) {
+                setShowThumbnailWarning(true);
+                URL.revokeObjectURL(url);
+            }
+
+            
+        }
+        img.onerror = () => {
+            alert("Something went wrong when processing your image. Please try again.")
+        };
+    }
+
+    const toggleDragClass = () => {
+        dropzone.current.classList.toggle(editStyles.dragged_over);
+    }
+
+    const titleCritiqueFromLength = title => {
+        let message, level;
+        const length = title.length;
+        
+        if (length <= 50) {
+            level = "safe";
+            message = "Title looks good everywhere";
+        } else if (length <= 60) {
+            level = "caution";
+            message = "⚠️ This title may get cut off (…) on mobile and sidebar views";
+        } else {
+            level = "warning";
+            message = "⚠️ This title will likely get cut off (…) at most views";
+        }
+
+        return {
+            style : editStyles[level],
+            message : message
+        }
+    }
 
     return (
         <>
@@ -16,22 +112,61 @@ export function EditMockupPopup({isVisible, currTitle}) {
         {isVisible && (
             <div className={popupStyles.popupContainer}>
                 <div className={editStyles.main_content}>
+                    <h2 style={{marginTop: 10}}className={popupStyles.header}>{currTitle ? "Edit Mockup" : "New Mockup"}</h2>
                     <section className={editStyles.thumbnail_section}>
-                        <div className={editStyles.thumbnail_wrapper}>
+                        <div ref={dropzone} onDragOver={e => e.preventDefault()} onDragEnter={toggleDragClass} onDragLeave={toggleDragClass} onDrop={handleDrop} className={editStyles.thumbnail_wrapper}>
+                            <img className={editStyles.preview_thumbnail} ref={thumbnailPreview}/>
+                            <img src={imageIcon}/>
                             <h2>Upload your thumbnail</h2>
                             <p>(1280 x 720 px is optimal)</p>
                         </div>
+                        {showThumbnailWarning && (
+                        <p className={editStyles.warning}>For rendering purposes, 1280x720 is the optimal thumbnail size. Your thumbnail is {uploadDimensions.width}x{uploadDimensions.height}</p>
+                        )}
                     </section>
-                    <section className={editStyles.title_section}>
 
-                        <input type="text" onChange={e => setTitle(e.target.value)} className={editStyles.title_input} value={title} placeholder="Enter your genius title..."/>
-                        <p className={editStyles.characterLength}>{title.length}</p>
+                    <section className={editStyles.title_section}>
+                        <article className={editStyles.title_input_group}>
+                            <input type="text" 
+                                onChange={e => {
+                                    setTitle(e.target.value); 
+                                    if(prevTitles.filter(prevTitle => prevTitle.includes(title)).length > 0) {
+                                        titleSuggestionsSection.current.classList.add(editStyles.visible);
+                                    }
+                                }} 
+                                className={editStyles.title_input} value={title} placeholder="Enter your genius title..."/>
+                            <p className={`${editStyles.characterLength} ${titleCritiqueFromLength(title).style}`}>{title.length}</p>
+                        </article>
+                        <p className={`${editStyles.title_status_message} ${titleCritiqueFromLength(title).style}`}>{titleCritiqueFromLength(title).message}</p>
+                        <div ref={titleSuggestionsSection} className={`${prevTitles.filter(prevTitle => prevTitle.includes(title)).length > 0 && editStyles.visible} ${editStyles.title_suggestions_section}`}>
+                            <h2 className={popupStyles}>Previously used</h2>
+                            <hr/>
+                            <div>
+                                {
+                                    prevTitles.map((prevTitle, index) => {
+                                        if(prevTitle.includes(title)) {
+                                            return (
+                                                <p 
+                                                onClick={() => {
+                                                    setTitle(prevTitle);
+                                                    titleSuggestionsSection.current.classList.remove(editStyles.visible);
+                                                }} 
+                                                key={index}
+                                                >{prevTitle}</p>
+                                            )
+                                        }
+                                        return null;
+                                    })     
+                                }
+                            </div>
+                        </div>
                     </section>
-                    <div className={editStyles.title_suggestions_section}>
-                        <h2 className={popupStyles}>Previously used</h2>
-                    </div>
+                    <button onMouseEnter={() => {setSubmitHovered(true)}} onMouseLeave={() => setSubmitHovered(false)} className={editStyles.confirm_button}>
+                        <p>{currTitle ? "Update Mockup" : "Create Mockup"}</p>
+                        <img src={arrowIcon} className={submitHovered ? editStyles.submit_hovered : ""}/> 
+                    </button>
+                    
                 </div>
-                
             </div>
         )}
         </>
