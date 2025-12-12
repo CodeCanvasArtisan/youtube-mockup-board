@@ -1,9 +1,12 @@
 import {useState, useEffect, useRef} from "react";
+import { createPortal } from "react-dom";
 
 import Draggable from "react-draggable";
 
 import styles from "../styles/components/mockup.module.css";
 import testThumbnail from "../assets/test_thumbnail.png";
+
+import { EditMockupPopup, ResizeMockupPopup } from "./MockupChangePopups";
 
 import moveIcon from "../assets/utility_button_icons/move.svg";
 import editIcon from "../assets/utility_button_icons/edit.svg";
@@ -16,11 +19,18 @@ import currentlyLightIcon from "../assets/utility_button_icons/toggle_mode_curre
 
 
 
-export function Mockup({isActive, isDarkMode}) {
+export function FavouriteStar({isActive}) {
+    return (
+        <div className={`${styles.favourite_star} ${isActive ? "" : styles.invisible}`}>
+            <img src={favouritedIcon} alt="favourited"/>
+        </div>
+    )
+}
+export function Mockup({isActive, isDarkMode, title, thumbnail}) {
     return (
         <div className={`${isDarkMode ? styles.dark : ""} ${styles.container} ${isActive ? styles.active : ""}`}>
             <section className={styles.thumbnail_section}>
-                <img src={testThumbnail} className={styles.thumbnail}/>
+                <img src={thumbnail} className={styles.thumbnail}/>
                 <div className={styles.video_length}>14:56</div>
             </section>
             <section className={styles.video_info_section}>
@@ -28,7 +38,7 @@ export function Mockup({isActive, isDarkMode}) {
                     <div className={styles.pfp}></div>
                 </div> {/* PFP */}
                 <div className={styles.video_title}>
-                    <p>How to be consistent when progress feels invisible</p>
+                    <p>{title}</p>
                 </div> {/* Title */}
 
                 <div></div> {/* Placeholder */}
@@ -46,8 +56,8 @@ export function Mockup({isActive, isDarkMode}) {
     )
 }
 
-export function UtilityButtons({isVisible, isDarkMode, toggleDarkMode}) {
-    const [favourited, setFavourited] = useState(false);
+export function UtilityButtons({isVisible, isDarkMode, toggleDarkMode, editMockup, resizeMockup, favourited, setFavourited, deleteMockup}) {
+    
     
     return (
         <div className={styles.utility_buttons_container}>
@@ -60,13 +70,34 @@ export function UtilityButtons({isVisible, isDarkMode, toggleDarkMode}) {
     )
 }
 
-export function MockupCombo({scaleFactor}) {
+export function MockupCombo({setScaleFactor, scaleFactor}) {
+
+    
     const [isActive, setIsActive] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(false);
 
+    const [title, setTitle] = useState("Enter your title to see how it looks");
+    const [thumbnailSrc, setThumbnailSrc] = useState(testThumbnail);
+
+    const [currSize, setCurrSize] = useState("home-large");
+    const [favourited, setFavourited] = useState(false);
+
+    const [isResizeActive, setIsResizeActive] = useState(false);
+    const [isEditActive, setIsEditActive] = useState(false);
+
     const nodeRef = useRef(null);
 
+    function deleteMockup() {
+        alert("Deleting mockup")
+    }
+
+
+    useEffect(() => {
+        setScaleFactor(1);
+    }, [isResizeActive, isEditActive]);
     return (
+        <>
+        
         <Draggable handle={`.${styles.move_button}`} bounds="parent" defaultPosition={{x: 2500, y: 2500}} nodeRef={nodeRef} scale={scaleFactor}>
             <div 
                 onMouseEnter={() => setIsActive(true)}
@@ -75,29 +106,48 @@ export function MockupCombo({scaleFactor}) {
                 handle=".handle" 
                 ref={nodeRef} style={{width: "fit-content"}}
             >
-                <Mockup isDarkMode={isDarkMode} isActive={isActive}/>
-                <UtilityButtons isDarkMode={isDarkMode} toggleDarkMode={setIsDarkMode} isVisible={isActive}/>
-                <button className={`${isActive ? "" : styles.inactive} ${styles.utility_button} ${styles.move_button}`}><img src={moveIcon}/></button>
+                <FavouriteStar isActive={favourited}/>
+                <article>
+                    <Mockup isDarkMode={isDarkMode} isActive={isActive} title={title} thumbnail={thumbnailSrc}/>
+                    <button className={`${isActive ? "" : styles.inactive} ${styles.utility_button} ${styles.move_button}`}><img src={moveIcon}/></button>
+                </article>
+                
+                <UtilityButtons 
+                    isVisible={isActive}
+                    isDarkMode={isDarkMode} 
+                    toggleDarkMode={setIsDarkMode} 
+                    editMockup={() => setIsEditActive(true)}
+                    resizeMockup={() => setIsResizeActive(true)}
+                    favourited={favourited}
+                    setFavourited={setFavourited}
+                    deleteMockup={deleteMockup}
+                />
             </div>  
         </Draggable>
         
+        {/* Portal these outside the transform */}
+        {createPortal(
+            <>
+                <ResizeMockupPopup 
+                    isVisible={isResizeActive}
+                    setIsVisible={setIsResizeActive}
+                    size={currSize}
+                    setSize={setCurrSize}
+                />
+                <EditMockupPopup
+                    isVisible={isEditActive}
+                    setIsVisible={setIsEditActive}
+                    title={title}
+                    setTitle={setTitle}
+                    thumbnail={thumbnailSrc}
+                    setThumbnail={setThumbnailSrc}
+
+                    prevTitles={["title #1", "title #2", "title #3"]}
+                />
+            </>, document.body // where to render
+        )}
+
+
+        </>
     )
-}
-
-
-// utils
-function editMockup() {
-    alert("Editing mockup");
-}
-function resizeMockup() {
-    alert("Resizing Mockup");
-}
-function toggleFavourite() {
-    alert("Toggling favourite status");
-}
-function toggleDarkMode() {
-    alert("Toggling dark mode");
-}
-function deleteMockup() {
-    alert("Deleting mockup");
 }

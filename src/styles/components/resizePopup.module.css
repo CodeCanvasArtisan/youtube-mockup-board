@@ -65,18 +65,24 @@ p {
 
 /* Submit button */
 .submit_button {
+
+
     background: var(--amber-yellow);
-    font-size: 1.5em;
+    font-size: 2em;
     font-weight: bold;
     
     border-radius: 15px;
-    width: 30%;
+    width: 50%;
     height: 15%;
     border: none;
     color: black;
-
-    margin-top: 30px;
-    position: relative; left: 35%;
+    
+    margin: 15% auto;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
    
 
 }
@@ -90,6 +96,5 @@ p {
 }
 .submit_button img {
     width: 15%;
-    transform: translateY(5px);
     margin-right: 5px;
 }

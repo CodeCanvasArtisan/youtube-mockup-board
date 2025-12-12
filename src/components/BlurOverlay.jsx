@@ -1,8 +1,8 @@
-export default function BlurOverlay({isVisible}){
+export default function BlurOverlay({isVisible, whenClicked}){
     return (
         <>
             {isVisible && (
-                <div className="blur-overlay"></div>
+                <div onClick={() => whenClicked()} className="blur-overlay"></div>
             )}
         </>
     )

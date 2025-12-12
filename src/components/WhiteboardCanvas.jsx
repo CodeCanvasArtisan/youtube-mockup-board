@@ -2,6 +2,7 @@ import React, {useState, useRef} from "react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import Draggable from "react-draggable"
 import "../styles/components/whiteboardCanvas.css";
+import popupStyles from "../styles/components/mockupChangePopups.module.css";
 
 import {Mockup, UtilityButtons, MockupCombo} from "../components/Mockup.jsx";
 
@@ -58,7 +59,7 @@ export default function Whiteboard() {
                 panning={{
                     disabled : false,
                     velocityDisabled : true, // no inertia when scrolling
-                    excluded : ["draggable-item"] // list of css classes that don't trigger panning e.g. combo-card
+                    excluded : ["draggable-item", popupStyles.popupContainer] // list of css classes that don't trigger panning e.g. combo-card
                 }}
 
                 // custom wheel handler
@@ -86,7 +87,7 @@ export default function Whiteboard() {
                     }}
                 >
                     <div className="whiteboard-wrapper">
-                        <MockupCombo scaleFactor={scaleFactor}/>
+                        <MockupCombo setScaleFactor={updateScaleFactor} scaleFactor={scaleFactor}/>
                     </div>
                 </TransformComponent>
                 

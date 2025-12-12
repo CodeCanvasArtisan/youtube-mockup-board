@@ -1,3 +1,5 @@
+.popupContainer * {transition: all 0.2s ease;}
+
 .popupContainer {
     transform-origin: center;
     position: absolute;
@@ -12,6 +14,11 @@
 
     border-radius: 20px;
 
+}
+
+.not_visible {
+    display: none;
+    transform: translateY(20px);
 }
 
 /* HEADER */

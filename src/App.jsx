@@ -18,16 +18,14 @@ function App() {
     };
 
   }, [])
+  
   const [overlayActive, setOverlayActive] = useState(false);
   const [editPopupActive, setEditPopupActive] = useState(false);
   const [resizePopupActive, setResizePopupActive] = useState(false);
   
   return (
     <>
-    <BlurOverlay isVisible={true}/>
 
-    <EditMockupPopup prevTitles={["title #1", "title #2", "title #3"]} isVisible={true} />
-    <ResizeMockupPopup currSize="home-large" closePopup={setEditPopupActive} isVisible={false}/>
     <Whiteboard/>
 
     </>

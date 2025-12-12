@@ -30,7 +30,7 @@
 .mockup-group-container {
     width: fit-content;
     display: grid;
-    grid-template-columns: 5fr 1fr;
+    grid-template-columns: 1fr 5fr 1fr;
     row-gap: 30px;
 }
 .mockup-group-container > * {
@@ -42,5 +42,7 @@
 .mockup-group-container * {
     transition: all 0.2s ease;
 }
+
+
 
 .draggable-item {cursor: auto;}

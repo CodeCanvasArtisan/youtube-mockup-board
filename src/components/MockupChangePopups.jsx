@@ -8,13 +8,18 @@ import popupStyles from "../styles/components/mockupChangePopups.module.css";
 import resizeStyles from "../styles/components/resizePopup.module.css";
 import editStyles from "../styles/components/editPopup.module.css";
 
+import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
+
+import BlurOverlay from "./BlurOverlay.jsx";
 
 
-export function EditMockupPopup({isVisible, currTitle, prevTitles}) {
 
-    const [title, setTitle] = useState(currTitle ? currTitle : "Enter your title to see how it looks");
-    const [thumbnail, setThumbnail] = useState();
+export function EditMockupPopup({isVisible, setIsVisible, title, setTitle, thumbnail, setThumbnail, prevTitles}) {
+
     
+    useLockBodyScroll(isVisible);
+    const initialTitle = useRef(title);
+    const isNew = initialTitle != "Enter your title to see how it looks";
 
     const [showThumbnailWarning, setShowThumbnailWarning] = useState(false);
     const [uploadDimensions, setUploadDimensions] = useState({});
@@ -25,9 +30,11 @@ export function EditMockupPopup({isVisible, currTitle, prevTitles}) {
 
     const [submitHovered, setSubmitHovered] = useState(false);
 
+  
     const handleDrop = (e) => {
         
         e.preventDefault();
+        toggleDragClass();
         
         const droppedFiles = e.dataTransfer.files;
         if(droppedFiles.length > 1) {
@@ -68,6 +75,8 @@ export function EditMockupPopup({isVisible, currTitle, prevTitles}) {
             dropzone.current.classList.remove(editStyles.dragged_over);
             dropzone.current.classList.add(editStyles.thumbnail_chosen);
 
+            setThumbnail(img.src);
+
             // let them know 1280x720 px is best
             if(img.width != 1280 || img.height != 720) {
                 setShowThumbnailWarning(true);
@@ -75,23 +84,24 @@ export function EditMockupPopup({isVisible, currTitle, prevTitles}) {
             }
 
             
+            
         }
         img.onerror = () => {
             alert("Something went wrong when processing your image. Please try again.")
         };
     }
-
     const toggleDragClass = () => {
         dropzone.current.classList.toggle(editStyles.dragged_over);
     }
 
     const titleCritiqueFromLength = title => {
+
         let message, level;
         const length = title.length;
         
         if (length <= 50) {
             level = "safe";
-            message = "Title looks good everywhere";
+            message = "Title will look good everywhere";
         } else if (length <= 60) {
             level = "caution";
             message = "⚠️ This title may get cut off (…) on mobile and sidebar views";
@@ -106,19 +116,30 @@ export function EditMockupPopup({isVisible, currTitle, prevTitles}) {
         }
     }
 
+    const submitNewMockupInfo = (thumbnailSrc, title) => {
+        const nonUniqueTitle = title == "Enter your title to see how it looks" ? true : false;
+        if(!thumbnailSrc || !title || nonUniqueTitle) {
+            alert(`Please ${!thumbnailSrc ? "upload a thumbnail" : ""}${nonUniqueTitle ? !thumbnailSrc ? "and type in a unique title." : "type in a unique title" : ""
+            }`);
+            return;
+        }
+        setIsVisible(false);
+    }
+
     return (
         <>
-        
-        {isVisible && (
-            <div className={popupStyles.popupContainer}>
+            <BlurOverlay whenClicked = {() => setIsVisible(false)}isVisible={isVisible}/>
+            <div className={`${popupStyles.popupContainer} ${isVisible ? "" : popupStyles.not_visible}`}>
                 <div className={editStyles.main_content}>
-                    <h2 style={{marginTop: 10}}className={popupStyles.header}>{currTitle ? "Edit Mockup" : "New Mockup"}</h2>
+                    <h2 style={{marginTop: 10}}className={popupStyles.header}>{isNew ? "New Mockup" : "Edit Mockup"}</h2>
                     <section className={editStyles.thumbnail_section}>
                         <div ref={dropzone} onDragOver={e => e.preventDefault()} onDragEnter={toggleDragClass} onDragLeave={toggleDragClass} onDrop={handleDrop} className={editStyles.thumbnail_wrapper}>
                             <img className={editStyles.preview_thumbnail} ref={thumbnailPreview}/>
-                            <img src={imageIcon}/>
-                            <h2>Upload your thumbnail</h2>
-                            <p>(1280 x 720 px is optimal)</p>
+                            <div className={editStyles.dropzone_instructions}>
+                                <img src={imageIcon}/>
+                                <h2>Upload your thumbnail</h2>
+                                <p>(1280 x 720 px is optimal)</p>
+                            </div>
                         </div>
                         {showThumbnailWarning && (
                         <p className={editStyles.warning}>For rendering purposes, 1280x720 is the optimal thumbnail size. Your thumbnail is {uploadDimensions.width}x{uploadDimensions.height}</p>
@@ -128,16 +149,18 @@ export function EditMockupPopup({isVisible, currTitle, prevTitles}) {
                     <section className={editStyles.title_section}>
                         <article className={editStyles.title_input_group}>
                             <input type="text" 
+                                autoComplete="off"
                                 onChange={e => {
-                                    setTitle(e.target.value); 
-                                    if(prevTitles.filter(prevTitle => prevTitle.includes(title)).length > 0) {
+                                    const newTitle=e.target.value;
+                                    setTitle(newTitle); 
+                                    if(prevTitles.filter(prevTitle => prevTitle.includes(newTitle)).length > 0) {
                                         titleSuggestionsSection.current.classList.add(editStyles.visible);
                                     }
                                 }} 
                                 className={editStyles.title_input} value={title} placeholder="Enter your genius title..."/>
                             <p className={`${editStyles.characterLength} ${titleCritiqueFromLength(title).style}`}>{title.length}</p>
                         </article>
-                        <p className={`${editStyles.title_status_message} ${titleCritiqueFromLength(title).style}`}>{titleCritiqueFromLength(title).message}</p>
+                        <p className={`${editStyles.title_status_message} ${titleCritiqueFromLength(title).style}`}>{title == initialTitle.current ? "" : titleCritiqueFromLength(title).message}</p>
                         <div ref={titleSuggestionsSection} className={`${prevTitles.filter(prevTitle => prevTitle.includes(title)).length > 0 && editStyles.visible} ${editStyles.title_suggestions_section}`}>
                             <h2 className={popupStyles}>Previously used</h2>
                             <hr/>
@@ -161,19 +184,20 @@ export function EditMockupPopup({isVisible, currTitle, prevTitles}) {
                             </div>
                         </div>
                     </section>
-                    <button onMouseEnter={() => {setSubmitHovered(true)}} onMouseLeave={() => setSubmitHovered(false)} className={editStyles.confirm_button}>
-                        <p>{currTitle ? "Update Mockup" : "Create Mockup"}</p>
+                    <button onMouseEnter={() => {setSubmitHovered(true)}} onMouseLeave={() => setSubmitHovered(false)} onClick={() => submitNewMockupInfo(thumbnail, title)} className={editStyles.confirm_button}>
+                        <p>{title ? "Update Mockup" : "Create Mockup"}</p>
                         <img src={arrowIcon} className={submitHovered ? editStyles.submit_hovered : ""}/> 
                     </button>
                     
                 </div>
             </div>
-        )}
         </>
     )
 }
 
-export function ResizeMockupPopup({isVisible, currSize, closePopup}) {
+export function ResizeMockupPopup({isVisible, setIsVisible, size, setSize}) {
+    useLockBodyScroll(isVisible);
+
 
     function getWidthFromMockupLocation(location) {
         /* {
@@ -219,28 +243,22 @@ export function ResizeMockupPopup({isVisible, currSize, closePopup}) {
         }
     }
 
-    const [chosenSize, setChosenSize] = useState(currSize);
-    const [previewWidth, setPreviewWidth] = useState(getWidthFromMockupLocation(currSize).relativeToHomeLarge[0]);
-    const [previewHeight, setPreviewHeight] = useState(getWidthFromMockupLocation(currSize).relativeToHomeLarge[1])
+    const [previewWidth, setPreviewWidth] = useState(getWidthFromMockupLocation(size).relativeToHomeLarge[0]);
+    const [previewHeight, setPreviewHeight] = useState(getWidthFromMockupLocation(size).relativeToHomeLarge[1])
 
     const handlePreviewSize = useEffect(() => {
-        setPreviewWidth(getWidthFromMockupLocation(chosenSize).relativeToHomeLarge[0]);
-        setPreviewHeight(getWidthFromMockupLocation(chosenSize).relativeToHomeLarge[1]);
+        setPreviewWidth(getWidthFromMockupLocation(size).relativeToHomeLarge[0]);
+        setPreviewHeight(getWidthFromMockupLocation(size).relativeToHomeLarge[1]);
+    }, [size])
 
-        console.log(chosenSize);
-        console.log("PHeight -> ", previewHeight); 
-        console.log("PWidth -> ", previewWidth, "\n\n"); 
-    }, [chosenSize])
-
-    function applySizingChanges() {
-        console.log(`Final size -> ${chosenSize} \n Dimensions -> ${getWidthFromMockupLocation(chosenSize).absolute[0]} x ${getWidthFromMockupLocation(chosenSize).absolute[1]}`);
-        closePopup(false);
+    const saveSizingChanges = newSize => {
+        alert(newSize);
     }
 
     return (
         <>
-        {isVisible && (
-            <div className={popupStyles.popupContainer}>
+            <BlurOverlay whenClicked={() => setIsVisible(false)} isVisible={isVisible}/>
+            <div className={`${popupStyles.popupContainer} ${isVisible ? "" : popupStyles.not_visible}`}>
                 <section>
                     <h1 className={popupStyles.header}>Resize Combo</h1>
                 </section>
@@ -248,15 +266,15 @@ export function ResizeMockupPopup({isVisible, currSize, closePopup}) {
                 <section className={resizeStyles.main_content}>
                     <div className={resizeStyles.sizing_options_container}>
                         <h2>Web Browser</h2>
-                        <ResizeOptionLabel UIName="Home Page - Large" labelName="home-large" isChecked={chosenSize === "home-large"} onChange={() => setChosenSize("home-large")}/>
-                        <ResizeOptionLabel UIName="Search Result" labelName="search-result" isChecked={chosenSize === "search-result"} onChange={() => setChosenSize("search-result")}/>
-                        <ResizeOptionLabel UIName="Channel Page - Large" labelName="channel-large" isChecked={chosenSize === "channel-large"} onChange={() => setChosenSize("channel-large")}/>
-                        <ResizeOptionLabel UIName="Channel Page - Small" labelName="channel-small" isChecked={chosenSize === "channel-small"} onChange={() => setChosenSize("channel-small")}/>
-                        <ResizeOptionLabel UIName="Sidebar" labelName="sidebar" isChecked={chosenSize === "sidebar"} onChange={() => setChosenSize("sidebar")}/>
+                        <ResizeOptionLabel UIName="Home Page - Large" labelName="home-large" isChecked={size === "home-large"} onChange={() => setSize("home-large")}/>
+                        <ResizeOptionLabel UIName="Search Result" labelName="search-result" isChecked={size === "search-result"} onChange={() => setSize("search-result")}/>
+                        <ResizeOptionLabel UIName="Channel Page - Large" labelName="channel-large" isChecked={size === "channel-large"} onChange={() => setSize("channel-large")}/>
+                        <ResizeOptionLabel UIName="Channel Page - Small" labelName="channel-small" isChecked={size === "channel-small"} onChange={() => setSize("channel-small")}/>
+                        <ResizeOptionLabel UIName="Sidebar" labelName="sidebar" isChecked={size === "sidebar"} onChange={() => setSize("sidebar")}/>
 
                         <br/>
                         <h2>Mobile</h2>
-                        <ResizeOptionLabel UIName="Home Page - Full Width" labelName="home-full-width" isChecked={chosenSize === "home-full-width"} onChange={() => setChosenSize("home-full-width")}/>
+                        <ResizeOptionLabel UIName="Home Page - Full Width" labelName="home-full-width" isChecked={size === "home-full-width"} onChange={() => setSize("home-full-width")}/>
 
                     </div>
                     <div className={resizeStyles.preview_container}>
@@ -265,11 +283,11 @@ export function ResizeMockupPopup({isVisible, currSize, closePopup}) {
                             <div className={resizeStyles.preview_wrapper}>
                             <div className={resizeStyles.preview_chosen} style={{width: previewWidth, height: previewHeight}}></div>
                         </div>
-                        <button onClick={() => applySizingChanges()} className={resizeStyles.submit_button}><img alt="submit" src={tickIcon}/>Looks good</button>
+                        <button onClick={() => setIsVisible(false)} className={resizeStyles.submit_button}><img alt="submit" src={tickIcon}/>Looks good</button>
                     </div>
                 </section>
             </div>
-        )}
+
         </>
         
     )
