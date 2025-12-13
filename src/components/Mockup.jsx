@@ -4,9 +4,12 @@ import { createPortal } from "react-dom";
 import Draggable from "react-draggable";
 
 import styles from "../styles/components/mockup.module.css";
-import testThumbnail from "../assets/test_thumbnail.png";
+
+import { createMockup, editMockup, deleteMockup, getAllMockups } from "../utils/dataStoreUtils.js";
 
 import { EditMockupPopup, ResizeMockupPopup } from "./MockupChangePopups";
+
+import { getSrcFromImageFile } from "../utils/imageUtils.js";
 
 import moveIcon from "../assets/utility_button_icons/move.svg";
 import editIcon from "../assets/utility_button_icons/edit.svg";
@@ -70,35 +73,48 @@ export function UtilityButtons({isVisible, isDarkMode, toggleDarkMode, editMocku
     )
 }
 
-export function MockupCombo({setScaleFactor, scaleFactor}) {
+export function MockupCombo({id, setScaleFactor, scaleFactor, originalTitle, originalThumbnail, originalIsDarkMode, originalIsFavourited, originalSize, originalPosition}) {
 
     
     const [isActive, setIsActive] = useState(false);
-    const [isDarkMode, setIsDarkMode] = useState(false);
+    const [isDarkMode, setIsDarkMode] = useState(originalIsDarkMode);
 
-    const [title, setTitle] = useState("Enter your title to see how it looks");
-    const [thumbnailSrc, setThumbnailSrc] = useState(testThumbnail);
+    const [title, setTitle] = useState(originalTitle);
+    const [thumbnail, setThumbnail] = useState(originalThumbnail);
 
-    const [currSize, setCurrSize] = useState("home-large");
-    const [favourited, setFavourited] = useState(false);
+    const [currSize, setCurrSize] = useState(originalSize);
+    const [favourited, setFavourited] = useState(originalIsFavourited);
+
+    const [position, setPosition] = useState({x : originalPosition.x, y: originalPosition.y});
 
     const [isResizeActive, setIsResizeActive] = useState(false);
     const [isEditActive, setIsEditActive] = useState(false);
 
     const nodeRef = useRef(null);
 
+    
     function deleteMockup() {
         alert("Deleting mockup")
     }
+    
+    // save positinoing changes
+    useEffect(() => {
+        console.log("Position after dragging: ", position);
+    }, [position])
 
-
+    // save changes triggered by toggles
+    useEffect(() => {
+        if(id) {
+            console.log("updateMockup goes here");
+        }
+    }, [favourited, isDarkMode, id])
     useEffect(() => {
         setScaleFactor(1);
     }, [isResizeActive, isEditActive]);
     return (
         <>
         
-        <Draggable handle={`.${styles.move_button}`} bounds="parent" defaultPosition={{x: 2500, y: 2500}} nodeRef={nodeRef} scale={scaleFactor}>
+        <Draggable handle={`.${styles.move_button}`} bounds="parent" defaultPosition={position} onStop={(e, data) => setPosition({x: data.x, y: data.y})} nodeRef={nodeRef} scale={scaleFactor}>
             <div 
                 onMouseEnter={() => setIsActive(true)}
                 onMouseLeave={() => setIsActive(false)} 
@@ -108,7 +124,7 @@ export function MockupCombo({setScaleFactor, scaleFactor}) {
             >
                 <FavouriteStar isActive={favourited}/>
                 <article>
-                    <Mockup isDarkMode={isDarkMode} isActive={isActive} title={title} thumbnail={thumbnailSrc}/>
+                    <Mockup isDarkMode={isDarkMode} isActive={isActive} title={title} thumbnail={getSrcFromImageFile(thumbnail).src}/>
                     <button className={`${isActive ? "" : styles.inactive} ${styles.utility_button} ${styles.move_button}`}><img src={moveIcon}/></button>
                 </article>
                 
@@ -133,15 +149,16 @@ export function MockupCombo({setScaleFactor, scaleFactor}) {
                     setIsVisible={setIsResizeActive}
                     size={currSize}
                     setSize={setCurrSize}
+                    updateMockup = {() => alert("update mockup")}
                 />
                 <EditMockupPopup
                     isVisible={isEditActive}
                     setIsVisible={setIsEditActive}
                     title={title}
                     setTitle={setTitle}
-                    thumbnail={thumbnailSrc}
-                    setThumbnail={setThumbnailSrc}
-
+                    thumbnail={thumbnail}
+                    setThumbnail={setThumbnail}
+                    updateMockup={() => alert("update mockup")}
                     prevTitles={["title #1", "title #2", "title #3"]}
                 />
             </>, document.body // where to render
@@ -151,3 +168,5 @@ export function MockupCombo({setScaleFactor, scaleFactor}) {
         </>
     )
 }
+
+

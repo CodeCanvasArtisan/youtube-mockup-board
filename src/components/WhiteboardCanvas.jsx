@@ -6,6 +6,9 @@ import popupStyles from "../styles/components/mockupChangePopups.module.css";
 
 import {Mockup, UtilityButtons, MockupCombo} from "../components/Mockup.jsx";
 
+import {createMockup} from "../utils/dataStoreUtils.js";
+
+
 // panning + zooming
 const handleWheel = (ref, event) => { 
     // ref = TransformWrapper's internal state + methods e.g. zoom level, position
@@ -22,8 +25,8 @@ const handleWheel = (ref, event) => {
 }
 
 export default function Whiteboard() {
-    const nodeRef1 = useRef(null);
-    const nodeRef2 = useRef(null);
+
+      const blob = new Blob(["some string"], { type: 'text/plain' }); // JUST UNTIL THUMBNAILS ARE BROUGHT BACK
     
     const [scaleFactor, updateScaleFactor] = useState(1);
 
@@ -87,8 +90,19 @@ export default function Whiteboard() {
                     }}
                 >
                     <div className="whiteboard-wrapper">
-                        <MockupCombo setScaleFactor={updateScaleFactor} scaleFactor={scaleFactor}/>
+                        <MockupCombo 
+                            setScaleFactor={updateScaleFactor} 
+                            scaleFactor={scaleFactor}
+                            id={1}
+                            originalTitle={"NEW TITLE 1"}
+                            originalThumbnail={blob}
+                            originalIsDarkMode={true}
+                            originalIsFavourited={false}
+                            originalSize={"home-large"}
+                            originalPosition={{x: 2300, y: 2300}}
+                        />
                     </div>
+               
                 </TransformComponent>
                 
             </TransformWrapper>

@@ -1,6 +1,7 @@
 import {useState, useEffect, useRef} from "react";
 
 import { ResizeOptionLabel } from "./ResizeOptionLabels";
+
 import tickIcon from "../assets/tick.svg";
 import imageIcon from "../assets/picture.svg";
 import arrowIcon from "../assets/arrow-white.svg";
@@ -8,13 +9,13 @@ import popupStyles from "../styles/components/mockupChangePopups.module.css";
 import resizeStyles from "../styles/components/resizePopup.module.css";
 import editStyles from "../styles/components/editPopup.module.css";
 
-import { useLockBodyScroll } from "../hooks/useLockBodyScroll";
+import { useLockBodyScroll } from "../utils/useLockBodyScroll.jsx";
 
 import BlurOverlay from "./BlurOverlay.jsx";
 
+import { getSrcFromImageFile } from "../utils/imageUtils.js";
 
-
-export function EditMockupPopup({isVisible, setIsVisible, title, setTitle, thumbnail, setThumbnail, prevTitles}) {
+export function EditMockupPopup({updateMockup, isVisible, setIsVisible, title, setTitle, thumbnail, setThumbnail, prevTitles}) {
 
     
     useLockBodyScroll(isVisible);
@@ -50,9 +51,15 @@ export function EditMockupPopup({isVisible, setIsVisible, title, setTitle, thumb
             return;
         }
 
-        const img = new Image();
-        const url = URL.createObjectURL(droppedFile);
+        
+
+        const processedImage = getSrcFromImageFile(droppedFile);
+        const img = processedImage.image;
+        const url = processedImage.url;
+
         img.src = url;
+
+
 
         img.onload = () => {
             const aspectRatio = img.width / img.height
@@ -75,19 +82,17 @@ export function EditMockupPopup({isVisible, setIsVisible, title, setTitle, thumb
             dropzone.current.classList.remove(editStyles.dragged_over);
             dropzone.current.classList.add(editStyles.thumbnail_chosen);
 
-            setThumbnail(img.src);
+            setThumbnail(droppedFile);
 
             // let them know 1280x720 px is best
             if(img.width != 1280 || img.height != 720) {
                 setShowThumbnailWarning(true);
                 URL.revokeObjectURL(url);
             }
-
-            
-            
         }
-        img.onerror = () => {
-            alert("Something went wrong when processing your image. Please try again.")
+        img.onerror = (e) => {
+            alert("Something went wrong when processing your image. Please try again.");
+            console.error("THUMBNAIL PROCESSING ERROR -> ", e.target.error);
         };
     }
     const toggleDragClass = () => {
@@ -116,14 +121,20 @@ export function EditMockupPopup({isVisible, setIsVisible, title, setTitle, thumb
         }
     }
 
-    const submitNewMockupInfo = (thumbnailSrc, title) => {
+    const submitNewMockupInfo = (thumbnail, title) => {
+        
         const nonUniqueTitle = title == "Enter your title to see how it looks" ? true : false;
         if(!thumbnailSrc || !title || nonUniqueTitle) {
             alert(`Please ${!thumbnailSrc ? "upload a thumbnail" : ""}${nonUniqueTitle ? !thumbnailSrc ? "and type in a unique title." : "type in a unique title" : ""
             }`);
             return;
         }
+        updateMockup({
+            thumbnail : thumbnail,
+            title : title 
+        })
         setIsVisible(false);
+        
     }
 
     return (
@@ -195,7 +206,7 @@ export function EditMockupPopup({isVisible, setIsVisible, title, setTitle, thumb
     )
 }
 
-export function ResizeMockupPopup({isVisible, setIsVisible, size, setSize}) {
+export function ResizeMockupPopup({updateMockup, isVisible, setIsVisible, size, setSize}) {
     useLockBodyScroll(isVisible);
 
 
