@@ -11,9 +11,7 @@ function App() {
 
   // initialise indexedDB
   useEffect(() => {
-    
-    initDatabase()
-
+    initDatabase();
     // no cleanup needed - browser handles that shit
   }, [])
 
@@ -30,40 +28,29 @@ function App() {
     };
 
   }, [])
-  
-  const [overlayActive, setOverlayActive] = useState(false);
-  const [editPopupActive, setEditPopupActive] = useState(false);
-  const [resizePopupActive, setResizePopupActive] = useState(false);
+
+  // set up mockups + refreshing logic
+  const [mockups, setMockups] = useState([]);
+  const [refreshTrigger, setRefreshTrigger] = useState(false);
+
+  useEffect(() => {
+    const fetchMockups = async () => {
+      const data = await getAllMockups();
+      console.log("Raw data from getAllMockups:", data);
+      setMockups(data);
+    };
+
+    fetchMockups();
+  }, [refreshTrigger])
   
   return (
     <>
-    <button 
-      style={{zIndex: 9999, position: 'fixed', top: "50%", left: "50%"}}
-      onClick={() => {
-        deleteMockup(
-          1
-        )}
-      }>delete</button>
-    <button 
-      style={{zIndex: 9999, position: 'fixed', top: "40%", left: "40%"}}
-      onClick={async () => {
-        console.log(await editMockup(2, {
-          title : "NEW TITLE 67676767676 LOOOOLLLLL",
-          isDarkMode : false,
-          size : "channel-large"
-        }))
-
-      }}
-       >edit</button>
-      
-      <button 
-      style={{zIndex: 9999, position: 'fixed', top: "60%", left: "40%"}}
-      onClick={async () => {
-        console.log(await getAllMockups())
-      }}
-       >GET ALL</button>
     
-    <Whiteboard/>
+    <Whiteboard
+      originalMockups={mockups}
+      refreshMockups={() => setRefreshTrigger(!refreshTrigger)}
+    />
+    
 
     </>
   )

@@ -9,7 +9,6 @@ import { createMockup, editMockup, deleteMockup, getAllMockups } from "../utils/
 
 import { EditMockupPopup, ResizeMockupPopup } from "./MockupChangePopups";
 
-import { getSrcFromImageFile } from "../utils/imageUtils.js";
 
 import moveIcon from "../assets/utility_button_icons/move.svg";
 import editIcon from "../assets/utility_button_icons/edit.svg";
@@ -73,9 +72,8 @@ export function UtilityButtons({isVisible, isDarkMode, toggleDarkMode, editMocku
     )
 }
 
-export function MockupCombo({id, setScaleFactor, scaleFactor, originalTitle, originalThumbnail, originalIsDarkMode, originalIsFavourited, originalSize, originalPosition}) {
+export function MockupCombo({id, triggerRefresh, setScaleFactor, scaleFactor, originalTitle, originalThumbnail, testThumbnail, originalIsDarkMode, originalIsFavourited, originalSize, originalPosition}) {
 
-    
     const [isActive, setIsActive] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(originalIsDarkMode);
 
@@ -93,38 +91,46 @@ export function MockupCombo({id, setScaleFactor, scaleFactor, originalTitle, ori
     const nodeRef = useRef(null);
 
     
-    function deleteMockup() {
-        alert("Deleting mockup")
+    function deleteMockupActivate(id) {
+        if(confirm("Are you sure?")) {
+            deleteMockup(id);
+            triggerRefresh();
+        } 
     }
     
     // save positinoing changes
     useEffect(() => {
-        console.log("Position after dragging: ", position);
+        if(!position) return
+
+        editMockup(id, {
+            position: {x: position.x, y: position.y}
+        })
     }, [position])
 
     // save changes triggered by toggles
     useEffect(() => {
         if(id) {
-            console.log("updateMockup goes here");
+            editMockup(id, {
+                isDarkMode: isDarkMode,
+                isFavourited : favourited
+            })
         }
     }, [favourited, isDarkMode, id])
-    useEffect(() => {
-        setScaleFactor(1);
-    }, [isResizeActive, isEditActive]);
+   
     return (
         <>
         
-        <Draggable handle={`.${styles.move_button}`} bounds="parent" defaultPosition={position} onStop={(e, data) => setPosition({x: data.x, y: data.y})} nodeRef={nodeRef} scale={scaleFactor}>
+        <Draggable handle={`.${styles.move_button}`} bounds="parent" position={position} onStop={(e, data) => setPosition({x: data.x, y: data.y})} nodeRef={nodeRef} scale={scaleFactor}>
             <div 
                 onMouseEnter={() => setIsActive(true)}
                 onMouseLeave={() => setIsActive(false)} 
                 className="draggable-item mockup-group-container" 
                 handle=".handle" 
-                ref={nodeRef} style={{width: "fit-content"}}
+                ref={nodeRef} style={{width: "fit-content", position: "absolute", left:0, top: 0}}
             >
                 <FavouriteStar isActive={favourited}/>
                 <article>
-                    <Mockup isDarkMode={isDarkMode} isActive={isActive} title={title} thumbnail={getSrcFromImageFile(thumbnail).src}/>
+                    <Mockup isDarkMode={isDarkMode} isActive={isActive} title={title} thumbnail={thumbnail}/>
                     <button className={`${isActive ? "" : styles.inactive} ${styles.utility_button} ${styles.move_button}`}><img src={moveIcon}/></button>
                 </article>
                 
@@ -136,7 +142,7 @@ export function MockupCombo({id, setScaleFactor, scaleFactor, originalTitle, ori
                     resizeMockup={() => setIsResizeActive(true)}
                     favourited={favourited}
                     setFavourited={setFavourited}
-                    deleteMockup={deleteMockup}
+                    deleteMockup={() => deleteMockupActivate(id)}
                 />
             </div>  
         </Draggable>
@@ -147,6 +153,7 @@ export function MockupCombo({id, setScaleFactor, scaleFactor, originalTitle, ori
                 <ResizeMockupPopup 
                     isVisible={isResizeActive}
                     setIsVisible={setIsResizeActive}
+                    mockupID={id}
                     size={currSize}
                     setSize={setCurrSize}
                     updateMockup = {() => alert("update mockup")}
@@ -157,8 +164,10 @@ export function MockupCombo({id, setScaleFactor, scaleFactor, originalTitle, ori
                     title={title}
                     setTitle={setTitle}
                     thumbnail={thumbnail}
+                    testThumbnail={testThumbnail}
                     setThumbnail={setThumbnail}
-                    updateMockup={() => alert("update mockup")}
+                    mockupID={id}
+                    updateMockup={editMockup}
                     prevTitles={["title #1", "title #2", "title #3"]}
                 />
             </>, document.body // where to render

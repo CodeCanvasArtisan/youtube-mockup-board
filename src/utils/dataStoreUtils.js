@@ -22,7 +22,7 @@ export function initDatabase() {
     }
 }
 
-export function createMockup(title, thumbnail, isFavourited, isDarkMode, size, position) {
+export function createMockup(mockupInfo) {
     return new Promise((resolve, reject) => {
         const open = window.indexedDB.open("MockupDatabase", 2);
         open.onsuccess = e => {
@@ -33,12 +33,7 @@ export function createMockup(title, thumbnail, isFavourited, isDarkMode, size, p
             const objectStore = transaction.objectStore("mockup");
 
             const request = objectStore.add({
-                title : title,
-                thumbnail : thumbnail,
-                isFavourited : isFavourited,
-                isDarkMode : isDarkMode,
-                size : size,
-                position: position
+                ...mockupInfo
             })
             request.onsuccess = e => {
                 console.log(`Created successfully! ${e.target.result}`);

@@ -13,9 +13,8 @@ import { useLockBodyScroll } from "../utils/useLockBodyScroll.jsx";
 
 import BlurOverlay from "./BlurOverlay.jsx";
 
-import { getSrcFromImageFile } from "../utils/imageUtils.js";
 
-export function EditMockupPopup({updateMockup, isVisible, setIsVisible, title, setTitle, thumbnail, setThumbnail, prevTitles}) {
+export function EditMockupPopup({updateMockup, isVisible, setIsVisible, title, setTitle, thumbnail, setThumbnail, mockupID, prevTitles}) {
 
     
     useLockBodyScroll(isVisible);
@@ -32,7 +31,7 @@ export function EditMockupPopup({updateMockup, isVisible, setIsVisible, title, s
     const [submitHovered, setSubmitHovered] = useState(false);
 
   
-    const handleDrop = (e) => {
+    const handleDrop = async (e) => {
         
         e.preventDefault();
         toggleDragClass();
@@ -53,28 +52,31 @@ export function EditMockupPopup({updateMockup, isVisible, setIsVisible, title, s
 
         
 
-        const processedImage = getSrcFromImageFile(droppedFile);
-        const img = processedImage.image;
-        const url = processedImage.url;
-
+        
+        const url = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(droppedFile);
+        });;
+        
+        const img = new Image();
         img.src = url;
-
-
+        
 
         img.onload = () => {
-            const aspectRatio = img.width / img.height
+            const aspectRatio = img.naturalWidth / img.naturalHeight
             const is16x9 = Math.abs(aspectRatio - 16/9) < 0.01; // allow small tolerance
 
             if(!is16x9) {
                 alert(`Image must be 16:9 aspect ratio.`);
-                URL.revokeObjectURL(url);
                 return;
             }
 
             // image is 16:9 - proceed
             setUploadDimensions({
-                width : img.width,
-                height: img.height
+                width : img.naturalWidth,
+                height: img.naturalHeight
             })
             
             // set image as background
@@ -82,12 +84,12 @@ export function EditMockupPopup({updateMockup, isVisible, setIsVisible, title, s
             dropzone.current.classList.remove(editStyles.dragged_over);
             dropzone.current.classList.add(editStyles.thumbnail_chosen);
 
-            setThumbnail(droppedFile);
-
+            
+            setThumbnail(url);
+            
             // let them know 1280x720 px is best
-            if(img.width != 1280 || img.height != 720) {
+            if(img.naturalWidth != 1280 && img.naturalWidth != 720) {
                 setShowThumbnailWarning(true);
-                URL.revokeObjectURL(url);
             }
         }
         img.onerror = (e) => {
@@ -124,12 +126,12 @@ export function EditMockupPopup({updateMockup, isVisible, setIsVisible, title, s
     const submitNewMockupInfo = (thumbnail, title) => {
         
         const nonUniqueTitle = title == "Enter your title to see how it looks" ? true : false;
-        if(!thumbnailSrc || !title || nonUniqueTitle) {
-            alert(`Please ${!thumbnailSrc ? "upload a thumbnail" : ""}${nonUniqueTitle ? !thumbnailSrc ? "and type in a unique title." : "type in a unique title" : ""
-            }`);
+        if(!thumbnail || !title || nonUniqueTitle) {
+            alert(`Please ${!thumbnail ? "upload a thumbnail" : ""}${nonUniqueTitle || !title ? !thumbnail ? "and type in a non-default title." : "type in a unique title" : ""}`);
             return;
         }
-        updateMockup({
+        console.log("MID -> ", mockupID);
+        updateMockup(mockupID, {
             thumbnail : thumbnail,
             title : title 
         })
@@ -145,7 +147,7 @@ export function EditMockupPopup({updateMockup, isVisible, setIsVisible, title, s
                     <h2 style={{marginTop: 10}}className={popupStyles.header}>{isNew ? "New Mockup" : "Edit Mockup"}</h2>
                     <section className={editStyles.thumbnail_section}>
                         <div ref={dropzone} onDragOver={e => e.preventDefault()} onDragEnter={toggleDragClass} onDragLeave={toggleDragClass} onDrop={handleDrop} className={editStyles.thumbnail_wrapper}>
-                            <img className={editStyles.preview_thumbnail} ref={thumbnailPreview}/>
+                            <img src={thumbnail} className={editStyles.preview_thumbnail} ref={thumbnailPreview}/>
                             <div className={editStyles.dropzone_instructions}>
                                 <img src={imageIcon}/>
                                 <h2>Upload your thumbnail</h2>
@@ -153,9 +155,10 @@ export function EditMockupPopup({updateMockup, isVisible, setIsVisible, title, s
                             </div>
                         </div>
                         {showThumbnailWarning && (
-                        <p className={editStyles.warning}>For rendering purposes, 1280x720 is the optimal thumbnail size. Your thumbnail is {uploadDimensions.width}x{uploadDimensions.height}</p>
+                        <p style={{textAlign:"center"}} className={editStyles.warning}>For rendering purposes, 1280x720 is the optimal thumbnail size. Your thumbnail is {uploadDimensions.width}x{uploadDimensions.height}</p>
                         )}
                     </section>
+                    <br/>
 
                     <section className={editStyles.title_section}>
                         <article className={editStyles.title_input_group}>
@@ -195,6 +198,7 @@ export function EditMockupPopup({updateMockup, isVisible, setIsVisible, title, s
                             </div>
                         </div>
                     </section>
+                    <br/>
                     <button onMouseEnter={() => {setSubmitHovered(true)}} onMouseLeave={() => setSubmitHovered(false)} onClick={() => submitNewMockupInfo(thumbnail, title)} className={editStyles.confirm_button}>
                         <p>{title ? "Update Mockup" : "Create Mockup"}</p>
                         <img src={arrowIcon} className={submitHovered ? editStyles.submit_hovered : ""}/> 
@@ -206,7 +210,7 @@ export function EditMockupPopup({updateMockup, isVisible, setIsVisible, title, s
     )
 }
 
-export function ResizeMockupPopup({updateMockup, isVisible, setIsVisible, size, setSize}) {
+export function ResizeMockupPopup({updateMockup, mockupID, isVisible, setIsVisible, size, setSize}) {
     useLockBodyScroll(isVisible);
 
 

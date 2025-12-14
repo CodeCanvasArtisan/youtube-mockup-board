@@ -1,12 +1,14 @@
 import React, {useState, useRef} from "react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
-import Draggable from "react-draggable"
+
 import "../styles/components/whiteboardCanvas.css";
 import popupStyles from "../styles/components/mockupChangePopups.module.css";
 
-import {Mockup, UtilityButtons, MockupCombo} from "../components/Mockup.jsx";
+import {MockupCombo} from "../components/Mockup.jsx";
 
 import {createMockup} from "../utils/dataStoreUtils.js";
+import { NewComboButton } from '../components/newComboButton.jsx';
+
 
 
 // panning + zooming
@@ -24,11 +26,12 @@ const handleWheel = (ref, event) => {
     }
 }
 
-export default function Whiteboard() {
+export default function Whiteboard({originalMockups, refreshMockups}) {
+    console.log("ORIGINAL MOCKUPS -> ", originalMockups);
 
-      const blob = new Blob(["some string"], { type: 'text/plain' }); // JUST UNTIL THUMBNAILS ARE BROUGHT BACK
     
     const [scaleFactor, updateScaleFactor] = useState(1);
+    const [transformState, setTransformState] = useState(null);
 
     const getMinScale = () => {
         const viewportWidth = window.innerWidth;
@@ -43,12 +46,31 @@ export default function Whiteboard() {
         // Use the smaller of the two to ensure canvas always covers viewport
         return Math.max(minScaleX, minScaleY);
     };
+
+    const getViewportCentre = () => {
+        
+
+        if (!transformState) return { x: 2500, y: 2500 };
+        const { positionX, positionY, scale } = transformState;
+
+        // Convert viewport center to canvas coordinates
+        const viewportCenterX = window.innerWidth / 2;
+        const viewportCenterY = window.innerHeight / 2;
+
+        const canvasCenterX = (viewportCenterX - positionX) / scale;
+        const canvasCenterY = (viewportCenterY - positionY) / scale;
+
+        return { x: canvasCenterX, y: canvasCenterY };
+    }
     
     
     return (
         <div className="whiteboard-container">
             <TransformWrapper
-                onTransformed={e => updateScaleFactor(e.state.scale)}
+                onTransformed={(ref, state) => {
+                    updateScaleFactor(state.scale);
+                    setTransformState(state);
+                }}
                 
                 initialScale={1}
                 minScale={getMinScale()}
@@ -90,22 +112,43 @@ export default function Whiteboard() {
                     }}
                 >
                     <div className="whiteboard-wrapper">
-                        <MockupCombo 
-                            setScaleFactor={updateScaleFactor} 
-                            scaleFactor={scaleFactor}
-                            id={1}
-                            originalTitle={"NEW TITLE 1"}
-                            originalThumbnail={blob}
-                            originalIsDarkMode={true}
-                            originalIsFavourited={false}
-                            originalSize={"home-large"}
-                            originalPosition={{x: 2300, y: 2300}}
-                        />
+                        {
+                        originalMockups.map(mockup => {
+                            
+                            return (
+                                <MockupCombo 
+                                    key={mockup.id}
+                                    setScaleFactor={updateScaleFactor} 
+                                    scaleFactor={scaleFactor}
+                                    id={mockup.id}
+                                    originalTitle={mockup.title}
+                                    originalThumbnail={mockup.thumbnail}
+                                    originalIsDarkMode={mockup.isDarkMode}
+                                    originalIsFavourited={mockup.isFavourited}
+                                    originalSize={mockup.size}
+                                    originalPosition={mockup.position || {x: 2500, y: 2500}}
+                                    triggerRefresh={refreshMockups}
+                                />
+                            )
+                        })}
+                        
                     </div>
                
                 </TransformComponent>
                 
             </TransformWrapper>
+            <NewComboButton onClick={async () => {
+                const viewportCentre = getViewportCentre();
+                await createMockup({
+                    title : "Enter your title & thumbnail to see how it looks",
+                    thumbnail : "",
+                    isDarkMode : false,
+                    isFavourited : false,
+                    size : "home-large",
+                    position: viewportCentre // set this to the current position of the transformwrapper (within the viewport)
+                });
+                refreshMockups();
+            }}/>
         </div>
     )
 }
