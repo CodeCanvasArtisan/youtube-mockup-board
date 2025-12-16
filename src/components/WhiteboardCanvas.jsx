@@ -27,7 +27,6 @@ const handleWheel = (ref, event) => {
 }
 
 export default function Whiteboard({originalMockups, refreshMockups}) {
-    console.log("ORIGINAL MOCKUPS -> ", originalMockups);
 
     
     const [scaleFactor, updateScaleFactor] = useState(1);

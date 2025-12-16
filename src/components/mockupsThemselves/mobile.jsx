@@ -1,6 +1,7 @@
 import styles from "/src/styles/components/mockups/mockup.module.css";
 import mobileStyles from "/src/styles/components/mockups/mobile.module.css";
 
+import {createTitleCutoffString} from "/src/utils/cutoffUtils.js";
 
 export function MobileMockup({isActive, isDarkMode, title, thumbnail}) {
     return (
@@ -20,7 +21,7 @@ export function MobileMockup({isActive, isDarkMode, title, thumbnail}) {
                     <div className={styles.pfp}></div>
                 </div> {/* PFP */}
                 <div className={styles.video_title}>
-                    <p>{title}</p>
+                    <p>{createTitleCutoffString(title, 45)}</p>
                 </div> {/* Title */}
 
                 <div></div> {/* Placeholder */}

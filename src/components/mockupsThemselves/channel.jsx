@@ -1,6 +1,9 @@
 import styles from "/src/styles/components/mockups/mockup.module.css";
 import channelStyles from "/src/styles/components/mockups/channel.module.css"
 
+import {createTitleCutoffString} from "/src/utils/cutoffUtils.js";
+
+
 export function ChannelLargeMockup({isActive, isDarkMode, title, thumbnail}) {
     return (
         <div className={`
@@ -20,7 +23,7 @@ export function ChannelLargeMockup({isActive, isDarkMode, title, thumbnail}) {
                 </div> {/* PFP */}
 
                 <div className={`${channelStyles.video_title} ${styles.video_title}`}>
-                    <p>{title}</p>
+                    <p>{createTitleCutoffString(title, 60)}</p>
                 </div> {/* Title */}
                 <div></div>
 
@@ -51,7 +54,7 @@ export function ChannelSmallMockup({isActive, isDarkMode, title, thumbnail}) {
                 </div> {/* PFP */}
 
                 <div className={`${channelStyles.video_title} ${styles.video_title}`}>
-                    <p>{title}</p>
+                    <p>{createTitleCutoffString(title, 45)}</p>
                 </div> {/* Title */}
                 <div></div>
 

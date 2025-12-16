@@ -130,7 +130,6 @@ export function EditMockupPopup({updateMockup, isVisible, setIsVisible, title, s
             alert(`Please ${!thumbnail ? "upload a thumbnail" : ""}${nonUniqueTitle || !title ? !thumbnail ? "and type in a non-default title." : "type in a unique title" : ""}`);
             return;
         }
-        console.log("MID -> ", mockupID);
         updateMockup(mockupID, {
             thumbnail : thumbnail,
             title : title 

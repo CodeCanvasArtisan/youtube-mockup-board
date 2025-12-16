@@ -1,4 +1,5 @@
 import styles from "/src/styles/components/mockups/horizontalLayout.module.css";
+import {createTitleCutoffString} from "/src/utils/cutoffUtils.js";
 
 export function SearchResultsMockup({isActive, isDarkMode, title, thumbnail}) {
     return (
@@ -15,7 +16,7 @@ export function SearchResultsMockup({isActive, isDarkMode, title, thumbnail}) {
             <section className={`${styles.video_info_section}`}>
                 <div></div>
                 <div className={styles.video_title}>
-                    <p>{title}</p>
+                    <p>{createTitleCutoffString(title, 65)}</p>
                 </div> {/* Title */}
                 <div></div>
                 <div className={styles.video_stats}>
@@ -40,6 +41,7 @@ export function SearchResultsMockup({isActive, isDarkMode, title, thumbnail}) {
 }
 
 export function SidebarMockup({isActive, isDarkMode, title, thumbnail}) {
+    
     return (
         <div className={`
             ${isDarkMode ? styles.dark : ""} 
@@ -54,7 +56,7 @@ export function SidebarMockup({isActive, isDarkMode, title, thumbnail}) {
             <section className={`${styles.video_info_section}`}>
                 <div></div>
                 <div className={`${styles.sidebar_video_title} ${styles.video_title}`}>
-                    <p>{title}</p>
+                    <p>{createTitleCutoffString(title, 55)}</p>
                 </div> {/* Title */}
                 <div className={styles.channel_name}>
                     <p>James Nicholls</p>

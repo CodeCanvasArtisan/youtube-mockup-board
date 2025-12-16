@@ -193,3 +193,14 @@
     width: 65%;
 }
 
+.curr_size_label {
+    font-size: 2em;
+    font-family: var(--font-headings);
+    font-weight: bold;
+    display: flex;
+    flex-direction: row;
+
+    width: 100%;
+    height: 100%;
+}
+

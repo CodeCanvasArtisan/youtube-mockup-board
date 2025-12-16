@@ -8,6 +8,7 @@ import styles from "../styles/components/mockups/mockup.module.css";
 import { createMockup, editMockup, deleteMockup, getAllMockups } from "../utils/dataStoreUtils.js";
 
 import { EditMockupPopup, ResizeMockupPopup } from "./MockupChangePopups";
+import { getUINameFromSize } from "../utils/sizeFormattingUtils.js";
 
 import { HomeLargeMockup } from "./mockupsThemselves/homeLarge.jsx";
 import { MobileMockup } from "./mockupsThemselves/mobile.jsx";
@@ -49,7 +50,7 @@ export function UtilityButtons({isVisible, isDarkMode, toggleDarkMode, editMocku
     )
 }
 
-export function MockupCombo({id, triggerRefresh, isHorizontalLayout, setScaleFactor, scaleFactor, originalTitle, originalThumbnail, testThumbnail, originalIsDarkMode, originalIsFavourited, originalSize, originalPosition}) {
+export function MockupCombo({id, triggerRefresh, setScaleFactor, scaleFactor, originalTitle, originalThumbnail, testThumbnail, originalIsDarkMode, originalIsFavourited, originalSize, originalPosition}) {
 
     const [isActive, setIsActive] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(originalIsDarkMode);
@@ -105,6 +106,9 @@ export function MockupCombo({id, triggerRefresh, isHorizontalLayout, setScaleFac
                 handle=".handle" 
                 ref={nodeRef} style={{width: "fit-content", position: "absolute", left:0, top: 0}}
             >
+                <div></div>
+                <div className={styles.curr_size_label}>{getUINameFromSize(currSize)}</div>
+                <div></div>
                 <FavouriteStar isActive={favourited}/>
                 <article>
                     
