@@ -3,11 +3,16 @@ import { createPortal } from "react-dom";
 
 import Draggable from "react-draggable";
 
-import styles from "../styles/components/mockup.module.css";
+import styles from "../styles/components/mockups/mockup.module.css";
 
 import { createMockup, editMockup, deleteMockup, getAllMockups } from "../utils/dataStoreUtils.js";
 
 import { EditMockupPopup, ResizeMockupPopup } from "./MockupChangePopups";
+
+import { HomeLargeMockup } from "./mockupsThemselves/homeLarge.jsx";
+import { MobileMockup } from "./mockupsThemselves/mobile.jsx";
+import { SearchResultsMockup, SidebarMockup } from "./mockupsThemselves/horizontalLayout.jsx";
+import { ChannelLargeMockup, ChannelSmallMockup } from "./mockupsThemselves/channel.jsx";
 
 
 import moveIcon from "../assets/utility_button_icons/move.svg";
@@ -28,35 +33,7 @@ export function FavouriteStar({isActive}) {
         </div>
     )
 }
-export function Mockup({isActive, isDarkMode, title, thumbnail}) {
-    return (
-        <div className={`${isDarkMode ? styles.dark : ""} ${styles.container} ${isActive ? styles.active : ""}`}>
-            <section className={styles.thumbnail_section}>
-                <img src={thumbnail} className={styles.thumbnail}/>
-                <div className={styles.video_length}>14:56</div>
-            </section>
-            <section className={styles.video_info_section}>
-                <div className={styles.pfp_section}>
-                    <div className={styles.pfp}></div>
-                </div> {/* PFP */}
-                <div className={styles.video_title}>
-                    <p>{title}</p>
-                </div> {/* Title */}
 
-                <div></div> {/* Placeholder */}
-                <div className={styles.channel_name}>
-                    <p>James Nicholls</p>
-                </div> {/* Channel name */}
-
-                <div></div> {/* Placeholder */}
-
-                <div className={styles.video_stats}>
-                    <p>112K views • 2 days ago</p>
-                </div> {/* Video stats */}
-            </section>
-        </div>
-    )
-}
 
 export function UtilityButtons({isVisible, isDarkMode, toggleDarkMode, editMockup, resizeMockup, favourited, setFavourited, deleteMockup}) {
     
@@ -72,7 +49,7 @@ export function UtilityButtons({isVisible, isDarkMode, toggleDarkMode, editMocku
     )
 }
 
-export function MockupCombo({id, triggerRefresh, setScaleFactor, scaleFactor, originalTitle, originalThumbnail, testThumbnail, originalIsDarkMode, originalIsFavourited, originalSize, originalPosition}) {
+export function MockupCombo({id, triggerRefresh, isHorizontalLayout, setScaleFactor, scaleFactor, originalTitle, originalThumbnail, testThumbnail, originalIsDarkMode, originalIsFavourited, originalSize, originalPosition}) {
 
     const [isActive, setIsActive] = useState(false);
     const [isDarkMode, setIsDarkMode] = useState(originalIsDarkMode);
@@ -130,7 +107,22 @@ export function MockupCombo({id, triggerRefresh, setScaleFactor, scaleFactor, or
             >
                 <FavouriteStar isActive={favourited}/>
                 <article>
-                    <Mockup isDarkMode={isDarkMode} isActive={isActive} title={title} thumbnail={thumbnail}/>
+                    
+                    
+
+                    <SearchResultsMockup 
+                        isDarkMode={isDarkMode} 
+                        isActive={isActive} 
+                        title={title} 
+                        thumbnail={thumbnail}
+                    />
+                    <SidebarMockup 
+                        isDarkMode={isDarkMode} 
+                        isActive={isActive} 
+                        title={title} 
+                        thumbnail={thumbnail}
+                    />
+                    
                     <button className={`${isActive ? "" : styles.inactive} ${styles.utility_button} ${styles.move_button}`}><img src={moveIcon}/></button>
                 </article>
                 

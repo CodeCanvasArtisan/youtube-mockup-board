@@ -2,8 +2,8 @@
     --mockup-background-dark : #0F0F0F;
     --mockup-background-light : #FAFAFA;
 
-    --mockup-font-size-primary : 1.6em;
-    --mockup-font-size-secondary: 1.3em;
+    --mockup-font-size-primary : 1.5em;
+    --mockup-font-size-secondary: 1.1em;
 
     --mockup-white : #f1f1f1;
     --mockup-black : #000000;
@@ -28,35 +28,26 @@
 
 /* Mockup itself */
 .container {
-    max-width: 600px;
-    height: fit-content;
-
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-
-    padding: 15px;
-    
     background-color: var(--mockup-background-light);
-    
+    border-radius: 10px;
 }
 .container:not(.active) {box-shadow: 0px 0px 20px 2px black;}
 
 
 .thumbnail_section {
-    height: 60%;
+    height: 75%;
     height: fit-content;
-    display: flex;
-
     position: relative;
+
+    aspect-ratio: 16/9;
 
 }
 .thumbnail {
     width: 100%;
-    height: fit-content;
+    
     object-fit: cover;
 
-    border-radius: 20px;
+    border-radius: 10px;
     aspect-ratio: 16/9;
     color: white;
 }
@@ -81,7 +72,7 @@
     grid-template-columns: 1fr 8fr;
     
     gap: 10px;
-    row-gap: 10px;
+    row-gap: 5px;
 
 }
 .video_info_section > * {
@@ -116,13 +107,16 @@
 
 
 .video_title {
-    height: 70px;    
+    height: 50px;  
+    display: flex;
+    
+  
 }
 .video_title p {
     font-size: var(--mockup-font-size-primary);
     color : var(--font-color);
     font-weight: bold;
-    line-height: 1.2em;
+    line-height: 1em;
 }
 
 /* Utility button controls */

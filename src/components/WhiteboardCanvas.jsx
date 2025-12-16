@@ -128,6 +128,7 @@ export default function Whiteboard({originalMockups, refreshMockups}) {
                                     originalSize={mockup.size}
                                     originalPosition={mockup.position || {x: 2500, y: 2500}}
                                     triggerRefresh={refreshMockups}
+                                    isHorizontalLayout={true}
                                 />
                             )
                         })}
