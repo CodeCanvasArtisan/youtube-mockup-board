@@ -1,4 +1,6 @@
 import React, {useState, useRef} from "react";
+import { createPortal } from "react-dom";
+
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 import "../styles/components/whiteboardCanvas.css";
@@ -127,7 +129,6 @@ export default function Whiteboard({originalMockups, refreshMockups}) {
                                     originalSize={mockup.size}
                                     originalPosition={mockup.position || {x: 2500, y: 2500}}
                                     triggerRefresh={refreshMockups}
-                                    isHorizontalLayout={true}
                                 />
                             )
                         })}

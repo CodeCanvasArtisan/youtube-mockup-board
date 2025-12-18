@@ -38,9 +38,18 @@ function App() {
       const data = await getAllMockups();
       console.log("Raw data from getAllMockups:", data);
       setMockups(data);
+
+      // set active titles
+      const activeTitles = [];
+      data.forEach(m => activeTitles.push(m.title));
+      console.log("ACTIVE TITLES AT SET -> ", activeTitles);
+      sessionStorage.setItem("activeTitles", JSON.stringify(activeTitles));
+
+      return data;
     };
 
     fetchMockups();
+   
   }, [refreshTrigger])
   
   return (

@@ -14,7 +14,7 @@ import { useLockBodyScroll } from "../utils/useLockBodyScroll.jsx";
 import BlurOverlay from "./BlurOverlay.jsx";
 
 
-export function EditMockupPopup({updateMockup, isVisible, setIsVisible, title, setTitle, thumbnail, setThumbnail, mockupID, prevTitles}) {
+export function EditMockupPopup({triggerRefresh, updateMockup, isVisible, setIsVisible, title, setTitle, thumbnail, setThumbnail, mockupID, prevTitles}) {
 
     
     useLockBodyScroll(isVisible);
@@ -134,6 +134,7 @@ export function EditMockupPopup({updateMockup, isVisible, setIsVisible, title, s
             thumbnail : thumbnail,
             title : title 
         })
+        triggerRefresh();
         setIsVisible(false);
         
     }
@@ -166,21 +167,22 @@ export function EditMockupPopup({updateMockup, isVisible, setIsVisible, title, s
                                 onChange={e => {
                                     const newTitle=e.target.value;
                                     setTitle(newTitle); 
-                                    if(prevTitles.filter(prevTitle => prevTitle.includes(newTitle)).length > 0) {
+                                    if(prevTitles.filter(prevTitle => prevTitle.toLowerCase().includes(newTitle.toLowerCase())).length > 0) {
                                         titleSuggestionsSection.current.classList.add(editStyles.visible);
+                                    } else {
+                                        titleSuggestionsSection.current.classList.remove(editStyles.visible);
+
                                     }
                                 }} 
                                 className={editStyles.title_input} value={title} placeholder="Enter your genius title..."/>
                             <p className={`${editStyles.characterLength} ${titleCritiqueFromLength(title).style}`}>{title.length}</p>
                         </article>
                         <p className={`${editStyles.title_status_message} ${titleCritiqueFromLength(title).style}`}>{title == initialTitle.current ? "" : titleCritiqueFromLength(title).message}</p>
-                        <div ref={titleSuggestionsSection} className={`${prevTitles.filter(prevTitle => prevTitle.includes(title)).length > 0 && editStyles.visible} ${editStyles.title_suggestions_section}`}>
-                            <h2 className={popupStyles}>Previously used</h2>
-                            <hr/>
+                        <div ref={titleSuggestionsSection} className={`${editStyles.title_suggestions_section}`}>
                             <div>
                                 {
                                     prevTitles.map((prevTitle, index) => {
-                                        if(prevTitle.includes(title)) {
+                                        if(prevTitle.toLowerCase().includes(title.toLowerCase())) {
                                             return (
                                                 <p 
                                                 onClick={() => {

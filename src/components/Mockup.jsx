@@ -212,7 +212,8 @@ export function MockupCombo({id, triggerRefresh, setScaleFactor, scaleFactor, or
                     setThumbnail={setThumbnail}
                     mockupID={id}
                     updateMockup={editMockup}
-                    prevTitles={["title #1", "title #2", "title #3"]}
+                    triggerRefresh={triggerRefresh}
+                    prevTitles={JSON.parse(sessionStorage.getItem("activeTitles"))}
                 />
             </>, document.body // where to render
         )}
