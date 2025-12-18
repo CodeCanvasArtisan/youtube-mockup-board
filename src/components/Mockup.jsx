@@ -94,7 +94,68 @@ export function MockupCombo({id, triggerRefresh, setScaleFactor, scaleFactor, or
             })
         }
     }, [favourited, isDarkMode, id])
-   
+    
+    // decide which sizing to render
+    const decideWhichMockup = () => {
+        switch(originalSize) {
+            case "search-result": 
+                return (
+                    <SearchResultsMockup 
+                        isDarkMode={isDarkMode} 
+                        isActive={isActive} 
+                        title={title} 
+                        thumbnail={thumbnail}
+                    />
+                )
+            case "channel-large":
+                return (
+                    <ChannelLargeMockup 
+                        isDarkMode={isDarkMode} 
+                        isActive={isActive} 
+                        title={title} 
+                        thumbnail={thumbnail}
+                    />
+                )
+            case "channel-small":
+                return (
+                    <ChannelSmallMockup 
+                        isDarkMode={isDarkMode} 
+                        isActive={isActive} 
+                        title={title} 
+                        thumbnail={thumbnail}
+                    />
+                )
+            case "sidebar":
+                return (
+                    <SidebarMockup 
+                        isDarkMode={isDarkMode} 
+                        isActive={isActive} 
+                        title={title} 
+                        thumbnail={thumbnail}
+                    />
+                )
+
+            case "home-full-width":
+                return (
+                    <MobileMockup 
+                        isDarkMode={isDarkMode} 
+                        isActive={isActive} 
+                        title={title} 
+                        thumbnail={thumbnail}
+                    />
+                )
+
+            default:
+                return (
+                    <HomeLargeMockup 
+                        isDarkMode={isDarkMode} 
+                        isActive={isActive} 
+                        title={title} 
+                        thumbnail={thumbnail}
+                    />
+                )       
+        }
+    }
     return (
         <>
         
@@ -111,22 +172,8 @@ export function MockupCombo({id, triggerRefresh, setScaleFactor, scaleFactor, or
                 <div></div>
                 <FavouriteStar isActive={favourited}/>
                 <article>
-                    
-                    
-
-                    <SearchResultsMockup 
-                        isDarkMode={isDarkMode} 
-                        isActive={isActive} 
-                        title={title} 
-                        thumbnail={thumbnail}
-                    />
-                    <SidebarMockup 
-                        isDarkMode={isDarkMode} 
-                        isActive={isActive} 
-                        title={title} 
-                        thumbnail={thumbnail}
-                    />
-                    
+                  
+                    {decideWhichMockup()} 
                     <button className={`${isActive ? "" : styles.inactive} ${styles.utility_button} ${styles.move_button}`}><img src={moveIcon}/></button>
                 </article>
                 
@@ -152,7 +199,8 @@ export function MockupCombo({id, triggerRefresh, setScaleFactor, scaleFactor, or
                     mockupID={id}
                     size={currSize}
                     setSize={setCurrSize}
-                    updateMockup = {() => alert("update mockup")}
+                    updateMockup = {editMockup}
+                    triggerRefresh = {triggerRefresh}
                 />
                 <EditMockupPopup
                     isVisible={isEditActive}

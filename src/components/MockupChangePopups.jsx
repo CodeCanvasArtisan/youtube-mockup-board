@@ -209,10 +209,8 @@ export function EditMockupPopup({updateMockup, isVisible, setIsVisible, title, s
     )
 }
 
-export function ResizeMockupPopup({updateMockup, mockupID, isVisible, setIsVisible, size, setSize}) {
+export function ResizeMockupPopup({updateMockup, mockupID, triggerRefresh, isVisible, setIsVisible, size: initialSize, setSize: setParentSize}) {
     useLockBodyScroll(isVisible);
-
-
     function getWidthFromMockupLocation(location) {
         /* {
             comparedToHomeLarge: [x%, y%], absolute: [x, y]
@@ -221,32 +219,26 @@ export function ResizeMockupPopup({updateMockup, mockupID, isVisible, setIsVisib
         let absolute, relativeToHomeLarge;
         switch(location) {
             case "channel-large":
-                absolute = [354, 279];
-                relativeToHomeLarge = ["90%", "90%"];
+                relativeToHomeLarge = ["100%", "100%"];
                 break;
 
             case "channel-small":
-                absolute = [210, 228];
                 relativeToHomeLarge = ["53%", "65%"];
                 break;
 
             case "search-result":
-                absolute = [727, 200];
-                relativeToHomeLarge = ["183%", "57%"];
+                relativeToHomeLarge = ["183%", "100%"];
                 break;
 
             case "home-full-width":
-                absolute = [350, 315];
                 relativeToHomeLarge = ["88%", "88%"];
                 break;
 
             case "sidebar":
-                absolute = [402, 102];
-                relativeToHomeLarge = ["100%", "29%"];
+                relativeToHomeLarge = ["90%", "29%"];
                 break;
 
             default:
-                absolute = [397, 352];
                 relativeToHomeLarge = ["100%", "100%"];
 
         }
@@ -257,18 +249,27 @@ export function ResizeMockupPopup({updateMockup, mockupID, isVisible, setIsVisib
         }
     }
 
-    const [previewWidth, setPreviewWidth] = useState(getWidthFromMockupLocation(size).relativeToHomeLarge[0]);
-    const [previewHeight, setPreviewHeight] = useState(getWidthFromMockupLocation(size).relativeToHomeLarge[1])
+    // use local state that syncs with parent
+    const [localSize, setLocalSize] = useState(initialSize);
+    useEffect(() => {
+        setLocalSize(initialSize);
+    }, [initialSize])
+
+
+    const handleSizeChange = (newSize) => {
+        setLocalSize(newSize);
+        setParentSize(newSize);
+    };
+
+    const [previewWidth, setPreviewWidth] = useState(getWidthFromMockupLocation(localSize).relativeToHomeLarge[0]);
+    const [previewHeight, setPreviewHeight] = useState(getWidthFromMockupLocation(localSize).relativeToHomeLarge[1])
 
     const handlePreviewSize = useEffect(() => {
-        setPreviewWidth(getWidthFromMockupLocation(size).relativeToHomeLarge[0]);
-        setPreviewHeight(getWidthFromMockupLocation(size).relativeToHomeLarge[1]);
-    }, [size])
+        setPreviewWidth(getWidthFromMockupLocation(localSize).relativeToHomeLarge[0]);
+        setPreviewHeight(getWidthFromMockupLocation(localSize).relativeToHomeLarge[1]);
+    }, [localSize])
 
-    const saveSizingChanges = newSize => {
-        alert(newSize);
-    }
-
+    
     return (
         <>
             <BlurOverlay whenClicked={() => setIsVisible(false)} isVisible={isVisible}/>
@@ -280,15 +281,15 @@ export function ResizeMockupPopup({updateMockup, mockupID, isVisible, setIsVisib
                 <section className={resizeStyles.main_content}>
                     <div className={resizeStyles.sizing_options_container}>
                         <h2>Web Browser</h2>
-                        <ResizeOptionLabel UIName="Home Page - Large" labelName="home-large" isChecked={size === "home-large"} onChange={() => setSize("home-large")}/>
-                        <ResizeOptionLabel UIName="Search Result" labelName="search-result" isChecked={size === "search-result"} onChange={() => setSize("search-result")}/>
-                        <ResizeOptionLabel UIName="Channel Page - Large" labelName="channel-large" isChecked={size === "channel-large"} onChange={() => setSize("channel-large")}/>
-                        <ResizeOptionLabel UIName="Channel Page - Small" labelName="channel-small" isChecked={size === "channel-small"} onChange={() => setSize("channel-small")}/>
-                        <ResizeOptionLabel UIName="Sidebar" labelName="sidebar" isChecked={size === "sidebar"} onChange={() => setSize("sidebar")}/>
+                        <ResizeOptionLabel UIName="Home Page - Large" labelName="home-large" isChecked={localSize === "home-large"} onChange={() => {handleSizeChange("home-large")}}/>
+                        <ResizeOptionLabel UIName="Search Result" labelName="search-result" isChecked={localSize === "search-result"} onChange={() => handleSizeChange("search-result")}/>
+                        <ResizeOptionLabel UIName="Channel Page - Large" labelName="channel-large" isChecked={localSize === "channel-large"} onChange={() => handleSizeChange("channel-large")}/>
+                        <ResizeOptionLabel UIName="Channel Page - Small" labelName="channel-small" isChecked={localSize === "channel-small"} onChange={() => handleSizeChange("channel-small")}/>
+                        <ResizeOptionLabel UIName="Sidebar" labelName="sidebar" isChecked={localSize === "sidebar"} onChange={() => handleSizeChange("sidebar")}/>
 
                         <br/>
                         <h2>Mobile</h2>
-                        <ResizeOptionLabel UIName="Home Page - Full Width" labelName="home-full-width" isChecked={size === "home-full-width"} onChange={() => setSize("home-full-width")}/>
+                        <ResizeOptionLabel UIName="Home Page - Full Width" labelName="home-full-width" isChecked={localSize === "home-full-width"} onChange={() => handleSizeChange("home-full-width")}/>
 
                     </div>
                     <div className={resizeStyles.preview_container}>
@@ -297,7 +298,17 @@ export function ResizeMockupPopup({updateMockup, mockupID, isVisible, setIsVisib
                             <div className={resizeStyles.preview_wrapper}>
                             <div className={resizeStyles.preview_chosen} style={{width: previewWidth, height: previewHeight}}></div>
                         </div>
-                        <button onClick={() => setIsVisible(false)} className={resizeStyles.submit_button}><img alt="submit" src={tickIcon}/>Looks good</button>
+                        <button 
+                            onClick={() => {
+                                updateMockup(mockupID, {
+                                    size : localSize
+                                });
+                                
+                                triggerRefresh();
+
+                                setIsVisible(false)
+                            }} 
+                            className={resizeStyles.submit_button}><img alt="submit" src={tickIcon}/>Looks good</button>
                     </div>
                 </section>
             </div>
