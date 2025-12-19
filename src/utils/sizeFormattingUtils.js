@@ -11,7 +11,7 @@ export function getUINameFromSize(size) {
             UISizeName = "Channel Page - Large";
             break;
         case "channel-small":
-            UISizeName = "Channel Page - Large";
+            UISizeName = "Channel Page - Small";
             break;
         case "sidebar":
             UISizeName = "Sidebar";

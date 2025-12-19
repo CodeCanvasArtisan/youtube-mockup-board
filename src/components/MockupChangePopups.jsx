@@ -167,7 +167,7 @@ export function EditMockupPopup({triggerRefresh, updateMockup, isVisible, setIsV
                                 onChange={e => {
                                     const newTitle=e.target.value;
                                     setTitle(newTitle); 
-                                    if(prevTitles.filter(prevTitle => prevTitle.toLowerCase().includes(newTitle.toLowerCase())).length > 0) {
+                                    if(prevTitles.filter(prevTitle => prevTitle.toLowerCase().includes(newTitle.toLowerCase()) && prevTitle != "Enter your title & thumbnail to see how it looks").length > 0) {
                                         titleSuggestionsSection.current.classList.add(editStyles.visible);
                                     } else {
                                         titleSuggestionsSection.current.classList.remove(editStyles.visible);
@@ -229,7 +229,7 @@ export function ResizeMockupPopup({updateMockup, mockupID, triggerRefresh, isVis
                 break;
 
             case "search-result":
-                relativeToHomeLarge = ["183%", "100%"];
+                relativeToHomeLarge = ["183%", "80%"];
                 break;
 
             case "home-full-width":

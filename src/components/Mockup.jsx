@@ -164,7 +164,6 @@ export function MockupCombo({id, triggerRefresh, setScaleFactor, scaleFactor, or
                 onMouseEnter={() => setIsActive(true)}
                 onMouseLeave={() => setIsActive(false)} 
                 className="draggable-item mockup-group-container" 
-                handle=".handle" 
                 ref={nodeRef} style={{width: "fit-content", position: "absolute", left:0, top: 0}}
             >
                 <div></div>
