@@ -10,8 +10,7 @@ import {MockupCombo} from "../components/Mockup.jsx";
 
 import {createMockup} from "../utils/dataStoreUtils.js";
 import { NewComboButton } from '../components/newComboButton.jsx';
-
-
+import {ScaleControls} from "../components/scaleControls.jsx";
 
 // panning + zooming
 const handleWheel = (ref, event) => { 
@@ -26,6 +25,7 @@ const handleWheel = (ref, event) => {
         ref.zoomIn(zoomAmount);
         return;
     }
+    
 }
 
 export default function Whiteboard({originalMockups, refreshMockups}) {
@@ -33,6 +33,33 @@ export default function Whiteboard({originalMockups, refreshMockups}) {
     
     const [scaleFactor, updateScaleFactor] = useState(1);
     const [transformState, setTransformState] = useState(null);
+
+    const transformRef = useRef(null);
+
+    const handleScaleChange = (newScale) => {
+        if (transformRef.current && transformState) {
+            // Get current viewport center in canvas coordinates
+            const viewportCenterX = window.innerWidth / 2;
+            const viewportCenterY = window.innerHeight / 2;
+            
+            const { positionX, positionY, scale: currentScale } = transformState;
+            
+            // Calculate canvas point at viewport center
+            const canvasCenterX = (viewportCenterX - positionX) / currentScale;
+            const canvasCenterY = (viewportCenterY - positionY) / currentScale;
+            
+            // Calculate new position to keep the same canvas point centered
+            const newPositionX = viewportCenterX - canvasCenterX * newScale;
+            const newPositionY = viewportCenterY - canvasCenterY * newScale;
+            
+            transformRef.current.setTransform(
+                newPositionX,
+                newPositionY,
+                newScale,
+                200 // animation duration in ms (0 = instant, try 200 for smooth)
+            );
+        }
+    };
 
     const getMinScale = () => {
         const viewportWidth = window.innerWidth;
@@ -66,90 +93,98 @@ export default function Whiteboard({originalMockups, refreshMockups}) {
     
     
     return (
-        <div className="whiteboard-container">
-            <TransformWrapper
-                onTransformed={(ref, state) => {
-                    updateScaleFactor(state.scale);
-                    setTransformState(state);
-                }}
-                
-                initialScale={1}
-                minScale={getMinScale()}
-                maxScale={3}
-
-                limitToBounds={true} // can't pan infinitely 
-                centerOnInit={true} 
-
-
-                // panning settings
-                panning={{
-                    disabled : false,
-                    velocityDisabled : true, // no inertia when scrolling
-                    excluded : ["draggable-item", popupStyles.popupContainer] // list of css classes that don't trigger panning e.g. combo-card
-                }}
-
-                // custom wheel handler
-                onWheel={handleWheel}
-
-                // wheel settings (scroll wheel + trackpad)
-                wheel={{
-                    step:  0.05,
-                    disabled : false,
-                }}
-
-                // double click settings
-                doubleClick = {{
-                    disabled : true // no double click to zoom
-                }}
-            >   
-                <TransformComponent
-                    wrapperStyle={{
-                        width: "100vw",
-                        height: "100vh",
-                    }}
-                    contentStyle={{
-                        width: "5000px",
-                        height: "5000px",
-                    }}
-                >
-                    <div className="whiteboard-wrapper">
-                        {
-                        originalMockups.map(mockup => {
-                            
-                            return (
-                                <MockupCombo 
-                                    key={mockup.id}
-                                    setScaleFactor={updateScaleFactor} 
-                                    scaleFactor={scaleFactor}
-                                    id={mockup.id}
-                                    originalTitle={mockup.title}
-                                    originalThumbnail={mockup.thumbnail}
-                                    originalIsDarkMode={mockup.isDarkMode}
-                                    originalIsFavourited={mockup.isFavourited}
-                                    originalSize={mockup.size}
-                                    originalPosition={mockup.position || {x: 2500, y: 2500}}
-                                    triggerRefresh={refreshMockups}
-                                />
-                            )
-                        })}
+        <>
+            <div className="whiteboard-container">
+                <TransformWrapper
+                    onTransformed={(ref, state) => {
+                        updateScaleFactor(state.scale);
                         
-                    </div>
-               
-                </TransformComponent>
+                        setTransformState(state);
+                    }}
+                    ref={transformRef}
+                    initialScale={1}
+                    minScale={getMinScale()}
+                    maxScale={3}
+
+                    limitToBounds={true} // can't pan infinitely 
+                    centerOnInit={true} 
+
+
+                    // panning settings
+                    panning={{
+                        disabled : false,
+                        velocityDisabled : true, // no inertia when scrolling
+                        excluded : ["draggable-item", popupStyles.popupContainer] // list of css classes that don't trigger panning e.g. combo-card
+                    }}
+
+                    // custom wheel handler
+                    onWheel={handleWheel}
+
+                    // wheel settings (scroll wheel + trackpad)
+                    wheel={{
+                        step:  0.05,
+                        disabled : false,
+                    }}
+
+                    // double click settings
+                    doubleClick = {{
+                        disabled : true // no double click to zoom
+                    }}
+                >   
+                    <TransformComponent
+                        wrapperStyle={{
+                            width: "100vw",
+                            height: "100vh",
+                        }}
+                        contentStyle={{
+                            width: "5000px",
+                            height: "5000px",
+                        }}
+                    >
+                        <div className="whiteboard-wrapper">
+                            {
+                            originalMockups.map(mockup => {
+                                
+                                return (
+                                    <MockupCombo 
+                                        key={mockup.id}
+                                        setScaleFactor={updateScaleFactor} 
+                                        scaleFactor={scaleFactor}
+                                        id={mockup.id}
+                                        originalTitle={mockup.title}
+                                        originalThumbnail={mockup.thumbnail}
+                                        originalIsDarkMode={mockup.isDarkMode}
+                                        originalIsFavourited={mockup.isFavourited}
+                                        originalSize={mockup.size}
+                                        originalPosition={mockup.position || {x: 2500, y: 2500}}
+                                        triggerRefresh={refreshMockups}
+                                    />
+                                )
+                            })}
+                            
+                        </div>
                 
-            </TransformWrapper>
-            <NewComboButton onClick={async () => {
-                const viewportCentre = getViewportCentre();
-                await createMockup({
-                    title : "Enter your title & thumbnail to see how it looks",
-                    thumbnail : "",
-                    isDarkMode : false,
-                    isFavourited : false,
-                    size : "home-large",
-                    position: viewportCentre // set this to the current position of the transformwrapper (within the viewport)
-                });
-                refreshMockups();
-            }}/>
-        </div>
+                    </TransformComponent>
+                    
+                </TransformWrapper>
+                <NewComboButton onClick={async () => {
+                    const viewportCentre = getViewportCentre();
+                    await createMockup({
+                        title : "Enter your title & thumbnail to see how it looks",
+                        thumbnail : "",
+                        isDarkMode : false,
+                        isFavourited : false,
+                        size : "home-large",
+                        position: viewportCentre // set this to the current position of the transformwrapper (within the viewport)
+                    });
+                    refreshMockups();
+                }}/>
+            </div>
+            {createPortal(
+                <>
+                   <ScaleControls scale={scaleFactor} editScale={handleScaleChange} />
+                </>, document.body
+            )}
+        </>
     )
 }

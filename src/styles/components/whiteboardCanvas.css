@@ -6,7 +6,7 @@
     
     background-color: #F8F8F6;
 
-    
+    transition: all 0.2 ease;
 }
 
 .whiteboard-wrapper {
