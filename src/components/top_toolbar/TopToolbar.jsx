@@ -5,10 +5,16 @@ import pictureIcon from "/src/assets/picture_black.svg";
 import downloadIcon from "/src/assets/download.svg";
 import deleteIcon from "/src/assets/utility_button_icons/delete.svg";
 
-export function TopToolbar({videoName, noCombos}) {
+export function TopToolbar({videoName, noCombos, isSidebarOpen}) {
     const [setName, setSetName] = useState(videoName)
+
     return (
-        <section className={styles.container}>
+        <section className={styles.container}
+            style={{
+                right : isSidebarOpen ? "5%" : "50%",
+                transform : isSidebarOpen ? "none" : "translateX(50%)"
+            }}
+        >
             <input
                 type="text"
                 value={setName}

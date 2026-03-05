@@ -54,7 +54,7 @@ function App() {
   
   return (
     <>
-    <TopToolbar noCombos={mockups.length} videoName="asdf"/>
+    <TopToolbar isSidebarOpen={false} noCombos={mockups.length} videoName="asdf"/>
     <Whiteboard
       originalMockups={mockups}
       refreshMockups={() => setRefreshTrigger(!refreshTrigger)}

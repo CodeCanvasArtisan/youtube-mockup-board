@@ -1,10 +1,9 @@
 .container {
-    width : 60vw;
+    width : 65vw;
     height : 7.5vh;
     box-shadow : 0 0 10px 2px rgb(0,0,0, 0.5);
     border-radius : 20px;
-    position : fixed; top: 5%; left : 50%; transform : translateX(-50%);
-    /* when sidebar is open -> right : 5%; */
+    position : fixed; 
 
     display: flex; justify-content: space-between; align-items: center;
     z-index :999;
@@ -50,7 +49,7 @@
     display: flex; justify-content: center; align-items: center; gap : 10px;
 }
 
-.container > button:hover{cursor : pointer; transform : translateY(-5%); background : var(--alabaster)}
+.container > button:hover {cursor : pointer; transform : translateY(-5%); background : var(--alabaster)}
 .container > button:active { transform : scale(0.95); }
 
 .delete_button:hover {
