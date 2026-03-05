@@ -1,0 +1,11 @@
+.container {
+    width : 60vw;
+    height : 10vh;
+    border : solid black 3px;
+    border-radius : 20px;
+    position : fixed; top : 5%; right : 5%;
+
+    display: flex; justify-content: center; align-items: center;
+    z-index :999;
+    background : var(--off-white);
+}

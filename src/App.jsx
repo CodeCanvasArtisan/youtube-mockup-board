@@ -5,6 +5,7 @@ import {initDatabase, createMockup, getAllMockups, deleteMockup, editMockup} fro
 
 import Whiteboard from "./components/WhiteboardCanvas.jsx";
 import './styles/App.css'
+import { TopToolbar } from './components/top_toolbar/TopToolbar.jsx';
 
 function App() {
       const blob = new Blob(["some string"], { type: 'text/plain' }); // JUST UNTIL THUMBNAILS ARE BROUGHT BACK
@@ -54,7 +55,7 @@ function App() {
   
   return (
     <>
-    
+    <TopToolbar/>
     <Whiteboard
       originalMockups={mockups}
       refreshMockups={() => setRefreshTrigger(!refreshTrigger)}
