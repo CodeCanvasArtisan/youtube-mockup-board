@@ -1,11 +1,58 @@
 .container {
     width : 60vw;
-    height : 10vh;
-    border : solid black 3px;
+    height : 7.5vh;
+    box-shadow : 0 0 10px 2px rgb(0,0,0, 0.5);
     border-radius : 20px;
-    position : fixed; top : 5%; right : 5%;
+    position : fixed; top: 5%; left : 50%; transform : translateX(-50%);
+    /* when sidebar is open -> right : 5%; */
 
-    display: flex; justify-content: center; align-items: center;
+    display: flex; justify-content: space-between; align-items: center;
     z-index :999;
     background : var(--off-white);
+
+    padding : 20px;
+    font-size : 1.5cqi;
+}
+.container:not(input) {user-select : none;}
+.container * {transition : all 0.2s ease}
+.container > *:not(input):hover {transform : translateY(-5%);}
+.container > input {
+    padding : 10px;
+    font-size : 2cqi;
+    border : none; outline : none;
+    box-shadow : 0 0 10px 2px var(--alabaster);
+    border-radius : 20px;
+    background : var(--off-white);
+    text-align : center;
+    width : 40%;
+}
+.container > input:focus {box-shadow : 0 0 10px 2px var(--electric-sapphire)}
+
+.no_combos {
+    display: flex; justify-content: center; align-items: center; gap: 15px;
+    font-size : 1.6cqi;
+    background : var(--alabaster);
+    padding : 10px;
+    border-radius : 20px;
+
+
+}
+.no_combos > img {width : 2em; max-width : 40px;}
+
+
+.container > button {
+    font-size : 1.5cqi;
+    border : none; outline : none;
+    border-radius : 20px;
+    background : none;
+    padding : 10px;
+    background : var(--off-white);
+    display: flex; justify-content: center; align-items: center; gap : 10px;
+}
+
+.container > button:hover{cursor : pointer; transform : translateY(-5%); background : var(--alabaster)}
+.container > button:active { transform : scale(0.95); }
+
+.delete_button:hover {
+    background : red !important;
 }

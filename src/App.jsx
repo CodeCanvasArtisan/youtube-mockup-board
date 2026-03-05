@@ -43,7 +43,6 @@ function App() {
       // set active titles
       const activeTitles = [];
       data.forEach(m => activeTitles.push(m.title));
-      console.log("ACTIVE TITLES AT SET -> ", activeTitles);
       sessionStorage.setItem("activeTitles", JSON.stringify(activeTitles));
 
       return data;
@@ -55,7 +54,7 @@ function App() {
   
   return (
     <>
-    <TopToolbar/>
+    <TopToolbar noCombos={mockups.length} videoName="asdf"/>
     <Whiteboard
       originalMockups={mockups}
       refreshMockups={() => setRefreshTrigger(!refreshTrigger)}
