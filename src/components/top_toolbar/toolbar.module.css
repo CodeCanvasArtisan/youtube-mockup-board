@@ -14,24 +14,23 @@
 }
 .container:not(input) {user-select : none;}
 .container * {transition : all 0.2s ease}
-.container > *:not(input):hover {transform : translateY(-5%);}
 .container > input {
     padding : 10px;
     font-size : 2cqi;
-    border : none; outline : none;
-    box-shadow : 0 0 10px 2px var(--alabaster);
+    outline : none;
+    border : solid var(--alabaster) 3px;
     border-radius : 20px;
     background : var(--off-white);
     text-align : center;
     width : 40%;
 }
-.container > input:focus {box-shadow : 0 0 10px 2px var(--electric-sapphire)}
+.container > input:focus {border : solid var(--amber-yellow) 3px;}
 
 .no_combos {
     display: flex; justify-content: center; align-items: center; gap: 15px;
     font-size : 1.6cqi;
     background : var(--alabaster);
-    padding : 10px;
+    padding : 10px 20px;
     border-radius : 20px;
 
 
