@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react'
 
-import {initDatabase, createMockup, getAllMockups, deleteMockup, editMockup} from "./utils/dataStoreUtils.js";
+import {initDatabase, getAllMockups} from "./utils/dataStoreUtils.js";
 // these are all
 
 import Whiteboard from "./components/WhiteboardCanvas.jsx";
 import './styles/App.css'
 import { TopToolbar } from './components/top_toolbar/TopToolbar.jsx';
+import { Sidebar } from './components/sidebar/Sidebar.jsx';
 
 function App() {
-      const blob = new Blob(["some string"], { type: 'text/plain' }); // JUST UNTIL THUMBNAILS ARE BROUGHT BACK
-
   // initialise indexedDB
   useEffect(() => {
     initDatabase();
@@ -30,9 +29,14 @@ function App() {
 
   }, [])
 
+  const [videos, setVideos] = useState([{id : 1, name : "asdf"}]);
+
   // set up mockups + refreshing logic
   const [mockups, setMockups] = useState([]);
   const [refreshTrigger, setRefreshTrigger] = useState(false);
+
+  // set up sidebar opening logic
+  const [isSidebarActive, setIsSidebarActive] = useState(false);
 
   useEffect(() => {
     const fetchMockups = async () => {
@@ -52,12 +56,15 @@ function App() {
    
   }, [refreshTrigger])
   
+  useEffect(() => console.log("sidebar active -> ", isSidebarActive), [isSidebarActive]);
+  
   return (
     <>
-    <TopToolbar isSidebarOpen={false} noCombos={mockups.length} videoName="asdf"/>
+    <TopToolbar isSidebarOpen={isSidebarActive} noCombos={mockups.length} videoName="asdf"/>
+    <Sidebar setIsActive={setIsSidebarActive} isActive={isSidebarActive} videos={videos}/>
     <Whiteboard
       originalMockups={mockups}
-      refreshMockups={() => setRefreshTrigger(!refreshTrigger)}
+      refreshMockups={() => setRefreshTrigger(curr => !curr)}
     />
     
 

@@ -11,8 +11,8 @@ export function TopToolbar({videoName, noCombos, isSidebarOpen}) {
     return (
         <section className={styles.container}
             style={{
-                right : isSidebarOpen ? "5%" : "50%",
-                transform : isSidebarOpen ? "none" : "translateX(50%)"
+                right : isSidebarOpen ? "37.5%" : "50%",
+                transform : "translateX(50%)"
             }}
         >
             <input
