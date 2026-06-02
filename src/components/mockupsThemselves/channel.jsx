@@ -23,7 +23,7 @@ export function ChannelLargeMockup({isActive, isDarkMode, title, thumbnail}) {
                 </div> {/* PFP */}
 
                 <div className={`${channelStyles.video_title} ${styles.video_title}`}>
-                    <p>{createTitleCutoffString(title, 60)}</p>
+                    <p>{title}</p>
                 </div> {/* Title */}
                 <div></div>
 
@@ -54,7 +54,7 @@ export function ChannelSmallMockup({isActive, isDarkMode, title, thumbnail}) {
                 </div> {/* PFP */}
 
                 <div className={`${channelStyles.video_title} ${styles.video_title}`}>
-                    <p>{createTitleCutoffString(title, 45)}</p>
+                    <p>{title}</p>
                 </div> {/* Title */}
                 <div></div>
 
