@@ -22,7 +22,7 @@ export function HomeLargeMockup({isActive, isDarkMode, title, thumbnail}) {
                     <div className={styles.pfp}></div>
                 </div> {/* PFP */}
                 <div className={styles.video_title}>
-                    <p>{createTitleCutoffString(title, 55)}</p>
+                    <p>{title}</p>
                 </div> {/* Title */}
 
                 <div></div> {/* Placeholder */}

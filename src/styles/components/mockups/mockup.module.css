@@ -109,7 +109,8 @@
 .video_title {
     height: 50px;  
     display: flex;
-    
+    width : 100%; 
+    overflow: hidden;
   
 }
 .video_title p {
