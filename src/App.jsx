@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Analytics } from '@vercel/analytics/react'
 
 import {initDatabase, createMockup, getAllMockups, deleteMockup, editMockup} from "./utils/dataStoreUtils.js";
 // these are all
@@ -59,7 +60,7 @@ function App() {
       originalMockups={mockups}
       refreshMockups={() => setRefreshTrigger(!refreshTrigger)}
     />
-    
+    <Analytics />
 
     </>
   )
