@@ -1,0 +1,58 @@
+.container {
+    width : 65vw;
+    height : 7.5vh;
+    box-shadow : 0 0 10px 2px rgb(0,0,0, 0.5);
+    border-radius : 20px;
+    position : fixed; 
+
+    display: flex; justify-content: space-between; align-items: center;
+    z-index :999;
+    background : var(--off-white);
+
+    padding : 20px;
+    font-size : 1.5cqi;
+}
+.container, .container * {transition : all 0.2s ease;}
+
+.container:not(input) {user-select : none;}
+.container * {transition : all 0.2s ease}
+.container > input {
+    padding : 10px;
+    font-size : 2cqi;
+    outline : none;
+    border : solid var(--alabaster) 3px;
+    border-radius : 20px;
+    background : var(--off-white);
+    text-align : center;
+    width : 40%;
+}
+.container > input:focus {border : solid var(--amber-yellow) 3px;}
+
+.no_combos {
+    display: flex; justify-content: center; align-items: center; gap: 15px;
+    font-size : 1.6cqi;
+    background : var(--alabaster);
+    padding : 10px 20px;
+    border-radius : 20px;
+
+
+}
+.no_combos > img {width : 2em; max-width : 40px;}
+
+
+.container > button {
+    font-size : 1.5cqi;
+    border : none; outline : none;
+    border-radius : 20px;
+    background : none;
+    padding : 10px;
+    background : var(--off-white);
+    display: flex; justify-content: center; align-items: center; gap : 10px;
+}
+
+.container > button:hover {cursor : pointer; transform : translateY(-5%); background : var(--alabaster)}
+.container > button:active { transform : scale(0.95); }
+
+.delete_button:hover {
+    background : red !important;
+}

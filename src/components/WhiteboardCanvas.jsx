@@ -10,6 +10,7 @@ import {MockupCombo} from "../components/Mockup.jsx";
 
 import {createMockup} from "../utils/dataStoreUtils.js";
 import { NewComboButton } from '../components/newComboButton.jsx';
+import { ExportButton } from "../components/exportButton.jsx";
 import {ScaleControls} from "../components/scaleControls.jsx";
 
 // panning + zooming
@@ -183,6 +184,7 @@ export default function Whiteboard({originalMockups, refreshMockups}) {
             {createPortal(
                 <>
                    <ScaleControls scale={scaleFactor} editScale={handleScaleChange} />
+                   <ExportButton />
                 </>, document.body
             )}
         </>

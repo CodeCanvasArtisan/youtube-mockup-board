@@ -50,6 +50,19 @@ export function UtilityButtons({isVisible, isDarkMode, toggleDarkMode, editMocku
     )
 }
 
+// decide which sizing to render
+export function MockupView({size, isDarkMode, isActive, title, thumbnail}) {
+    const props = {isDarkMode, isActive, title, thumbnail};
+    switch(size) {
+        case "search-result": return <SearchResultsMockup {...props}/>;
+        case "channel-large": return <ChannelLargeMockup {...props}/>;
+        case "channel-small": return <ChannelSmallMockup {...props}/>;
+        case "sidebar": return <SidebarMockup {...props}/>;
+        case "home-full-width": return <MobileMockup {...props}/>;
+        default: return <HomeLargeMockup {...props}/>;
+    }
+}
+
 export function MockupCombo({id, triggerRefresh, setScaleFactor, scaleFactor, originalTitle, originalThumbnail, testThumbnail, originalIsDarkMode, originalIsFavourited, originalSize, originalPosition}) {
 
     const [isActive, setIsActive] = useState(false);
@@ -95,67 +108,6 @@ export function MockupCombo({id, triggerRefresh, setScaleFactor, scaleFactor, or
         }
     }, [favourited, isDarkMode, id])
     
-    // decide which sizing to render
-    const decideWhichMockup = () => {
-        switch(originalSize) {
-            case "search-result": 
-                return (
-                    <SearchResultsMockup 
-                        isDarkMode={isDarkMode} 
-                        isActive={isActive} 
-                        title={title} 
-                        thumbnail={thumbnail}
-                    />
-                )
-            case "channel-large":
-                return (
-                    <ChannelLargeMockup 
-                        isDarkMode={isDarkMode} 
-                        isActive={isActive} 
-                        title={title} 
-                        thumbnail={thumbnail}
-                    />
-                )
-            case "channel-small":
-                return (
-                    <ChannelSmallMockup 
-                        isDarkMode={isDarkMode} 
-                        isActive={isActive} 
-                        title={title} 
-                        thumbnail={thumbnail}
-                    />
-                )
-            case "sidebar":
-                return (
-                    <SidebarMockup 
-                        isDarkMode={isDarkMode} 
-                        isActive={isActive} 
-                        title={title} 
-                        thumbnail={thumbnail}
-                    />
-                )
-
-            case "home-full-width":
-                return (
-                    <MobileMockup 
-                        isDarkMode={isDarkMode} 
-                        isActive={isActive} 
-                        title={title} 
-                        thumbnail={thumbnail}
-                    />
-                )
-
-            default:
-                return (
-                    <HomeLargeMockup 
-                        isDarkMode={isDarkMode} 
-                        isActive={isActive} 
-                        title={title} 
-                        thumbnail={thumbnail}
-                    />
-                )       
-        }
-    }
     return (
         <>
         
@@ -172,7 +124,7 @@ export function MockupCombo({id, triggerRefresh, setScaleFactor, scaleFactor, or
                 <FavouriteStar isActive={favourited}/>
                 <article>
                   
-                    {decideWhichMockup()} 
+                    <MockupView size={originalSize} isDarkMode={isDarkMode} isActive={isActive} title={title} thumbnail={thumbnail}/>
                     <button className={`${isActive ? "" : styles.inactive} ${styles.utility_button} ${styles.move_button}`}><img src={moveIcon}/></button>
                 </article>
                 

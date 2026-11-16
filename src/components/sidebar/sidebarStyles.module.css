@@ -1,0 +1,105 @@
+.sidebar_group_container {
+    display : grid;
+    grid-template-columns : 4fr 1fr;
+    position : fixed;
+    top : 50%; transform : translateY(-50%); 
+    left : 1%;
+    z-index : 9999;
+    column-gap : 10px;
+    width : 20vw;
+}
+.sidebar_group_container, .sidebar_group_container * {transition : all 0.2s ease;}
+.is_inactive {
+    left : -17vw;
+}
+.toggle_button_section {
+    display: flex; justify-content: flex-start; align-items: flex-start;
+
+}
+.toggle_button_section > button {
+    box-sizing : border-box;
+    border : solid black 2px; outline : none;
+    display: flex; justify-content: center; align-items: center;
+
+    width : 5cqi;
+    aspect-ratio : 1/1;
+    background : var(--off-white);
+    border-radius : 50%;
+    box-shadow : 0 0 10px 2px rgb(0,0,0, 0.25);
+}
+.toggle_button_section img {
+    max-width : 200px;
+    width : 4em;
+}
+
+.toggle_button_section > button:hover {cursor : pointer;}
+
+.sidebar_container button:active {transform : scale(0.95)}
+
+.sidebar_container {
+    width : 15vw;
+    height : 90vh;
+    display: flex; justify-content: flex-start; align-items: left; flex-direction : column;
+    z-index : 999;
+   
+    background : var(--off-white);
+
+    border-radius : 20px;
+    box-shadow : 0 0 10px 2px rgb(0,0,0, 0.25);
+
+    padding : 20px;
+}
+.sidebar_container * {transition : all 0.2s ease;}
+
+.sidebar_container > h1 {
+    font-size : 3cqi;
+    align-self : center;
+    border-radius : 20px;
+    background : var(--amber-yellow);
+    padding : 10px 50px;
+    width : fit-content; max-width : 90%;
+    text-align : center; display: flex; justify-content: center; align-items: center;
+
+    box-sizing : border-box;
+
+}
+
+.video_option_button {
+    display: flex; justify-content: space-between; align-items: center;
+    font-size : 2cqi; font-weight:  bold;
+    padding : 10px;
+    border-radius : 20px;
+    border:none; outline:none;
+} 
+
+.sidebar_container p {margin : 0;}
+.video_option_button:hover {
+    background : var(--alabaster); 
+    cursor : pointer;
+    transform : translateX(2%);
+}
+.sidebar_container img {
+    opacity : 1;
+    max-width : 30px;
+    width : 2em;
+}
+.sidebar_container img.inactive {
+    opacity : 0;
+    transform : translateX(-10%);
+}
+
+.new_video_button {
+    background : vaR(--off-white);
+    width : fit-content;
+    padding : 5px;
+
+    border : none; outline:  none;
+    margin : 0 auto;
+    margin-top : 30px;
+    
+}
+.new_video_button:hover {cursor : pointer; transform : translateY(-5%);}
+.new_video_button > img {
+    width : 5em; max-width : 100px;
+    user-select : none;
+}
