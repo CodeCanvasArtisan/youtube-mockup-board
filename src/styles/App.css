@@ -16,3 +16,5 @@
   backdrop-filter: brightness(50%) blur(5px);
 
 }
+/* Offscreen export rendering: drop the on-canvas glow so PNGs are clean */
+.export-stage * { box-shadow: none !important; }

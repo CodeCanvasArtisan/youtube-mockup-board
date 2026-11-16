@@ -60,8 +60,8 @@ function App() {
   
   return (
     <>
-    <TopToolbar isSidebarOpen={isSidebarActive} noCombos={mockups.length} videoName="asdf"/>
-    <Sidebar setIsActive={setIsSidebarActive} isActive={isSidebarActive} videos={videos}/>
+    {/* <TopToolbar isSidebarOpen={isSidebarActive} noCombos={mockups.length} videoName="asdf"/> */}
+    {/* <Sidebar setIsActive={setIsSidebarActive} isActive={isSidebarActive} videos={videos}/> */}
     <Whiteboard
       originalMockups={mockups}
       refreshMockups={() => setRefreshTrigger(curr => !curr)}
